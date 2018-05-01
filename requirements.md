@@ -13,32 +13,9 @@
     - Ask user to allow the `Daemon` to start `Producer` | `Consumer` on startup
 - If user re-init the Daemon, Daemon will have user confirm to override the current configs.
 - User can init Producer | Consumer by using: `open-bucket [producer | consumer] init`. The same behavior will apply as when user re-init the Daemon.
-- User can use `open-bucket [producer | consumer] start` command to start `Producer` | `Consumer` manually. Or they can config the `Daemon` to start them on startup.
-- User can change the configs by using: `open-bucket [producer | consumer] configs`. The Config file's editable fields will be opened in user default editor.
-    - When the config file is saved, the saved configs will be applied.
-    - If user change diretory path: TODO
-    - If user config the limit to be lower than current Consumer directory size, Consumer directory will be truncated to match with the desired litmit.
-    - Example of config's editable fields (READONLY fields will be hidden):
-    ```json
-        {
-            "authentication": {
-                "token": "User Authentication Token",
-                "privateKey": "User private key"
-            },
-            "consumer": {
-                "directory": "~/open-bucket/consume",
-                "limit": "2 GB",
-                "startOnStartup": true
-            },
-            "producer": {
-                "directory": "~/open-bucket/produce",
-                "defaultAvailability": 2,
-                "startOnStartup": true
-            },
-        }
-    ```
 
 ## Producing Files to the Network
+- User __MUST__ start the Producer first by using: `open-bucket producer start`. Daemon will ignore this command if the Producer has already started.
 - User can produce files to the Network with 2 ways:
     - User can __copy__ files directly into the __local Producer directory__. Based on the Producer status, the following cases will be considered:
         - \[If the Producer status is `STARTED` \]: the Producer will detect the changes and automatically upload the unsynced files into the Network with the default availability is __2__.
@@ -66,21 +43,50 @@
                     "availability": 2
                 }
             ```
-- User can edit file's metadata on the Network by using: `open-bucket producer edit [ /path/to/file/from/Producer/dir | fileId ]`. File's editable metadata will be opened on user's default editor & will have JSON format. The changes in file's metadata will be applied when user save. Example of file's editable metadata:
-    ```json
-        {
-            "path": "path/to/file.txt",
-            "availability": 2
-        }
-    ```
-
+- User can apple changes into Producer by using: `open-bucket producer apply /path/to/input/file.json`
+    - Input file __MUST__ be on JSON format.
+    - Producer only takes valid field of input file. Invalid fields will be ignored.
+    - Input file that has valid field with invalid value will be rejected.
+    - Input file __MUST__ have `type` field. Producer will base on the `type` field and some other fields (if required) to apply the changes.
+    - User can apply changes on file's metadata by using an Input file has `"type": "File"` (with the required field to be `id` or `path`). A sample of the file input content in JSON:
+        ```json
+            {
+                "type": "File",
+                "id": "fileId",
+                "path": "path/to/file.txt",
+                "availability": 2
+            }
+        ```
+    - User can apply changes on Producer configs by using an Input file has `"type": "ProducerConfig"`. A sample of the file input content in JSON:
+        ```json
+            {
+                "type": "ProducerConfig",
+                "directory": "~/open-bucket/produce",
+                "defaultAvailability": 2,
+                "startOnStartup": true
+            }
+        ```
+        - If user change diretory path: All the files inside the old Producer directory will be moved to the new path.
 ## Consuming Data from the Network
+- User __MUST__ start the Consumer first by using: `open-bucket consumer start`. Daemon will ignore this command if the Consumer has already started.
 - Local Consumer directory will have its limit defined by user.
     - If the limit is reached, Consumer stop consuming data from the Network.
     - If user config the limit to be lower than current Consumer directory size, Consumer directory will be truncated to match with the desired litmit.
     - Invalid `limit` field will disable the Consumer. `limit` format should be: `${consumeSize} GB`
 - Data in __local Consumer directory__ will be the __encypted shards__ of the files that have been produced into the Network.
 - Shards inside consumer __MUST NOT__ be modified (including deleting), CWatcher will ensure the consuming shards hasn't been modified. For each modified/deleted shard, Consumer will ask the Tracker to remove current user from the list of the shard consumer & remove the shard locally.
+- User can apple changes to Consumer by using: `open-bucket consumer apply /path/to/input/file.json`
+    - The same rules applied as Producer input file.
+    - User can apply changes to Consumer configs by using an Input file has `"type": "ConsumerConfig"`. A sample of the file input content in JSON:
+        ```json
+            {
+                "type": "ConsumerConfig",
+                "directory": "~/open-bucket/consume",
+                "limit": "2 GB",
+                "startOnStartup": true
+            }
+        ```
+        - If user change diretory path: All the shards inside the old Consumer directory will be moved to the new path.
 
 # Client
 - When user install the `Client` before installing the `Daemon`, Client will ask user permission to install the `Daemon`.
@@ -91,7 +97,7 @@ TODO
 
 # Implementation
 ## Core
-- Open Bucket will have all its configs saved to the Config file. On startup, Daemon | Producer | Consumer will init their config state from Config file.
+- Open Bucket will have all its configs saved to the Config file. On startup, Daemon | Producer | Consumer will init their config state from Config file. When the Config file is saved, the saved configs will be applied immediately.
 
 ### Watcher
 - Producer & Consumer have their own Watcher (`PWatcher` for Producer, `CWatcher` for Consumer)
@@ -104,7 +110,7 @@ Config file, the CWatcher will detect the changes and emit `setLimit` event with
 
 ### Init command:
 > Command: `open-bucket init`
-> REST API: `POST /v1/init` - Client must provide all necessary information: Authentication &Configs
+> REST API: `POST /v1/init` - Client must provide all necessary information: Authentication & Configs
 - __Authentication__: User must provide username/password that they've registered on the Tracker.
 - __Define the Config file__: Ask user whether they use `Producer` or `Consumer` functionality. User will need to define the config for the one they've choose __YES__ (Default values will be used in place of missing configs, the fields start with `_` (e.g: `_status`) are READONLY fields)
     - The Config file:
