@@ -4,8 +4,8 @@
 - User __must__ have `Node.js@10.0.0` installed and install `@open-bucket/daemon` globally using `npm`: `npm i -g @open-bucket/daemon`
 - `Daemon` has __CLI__ and __TCP__ interface. User interacts with Daemon through __CLI__, Client interacts with Daemon through __TCP__ interface
 - Daemon have __2 Primary Instances__: `Producer` & `Consumer`
-    - `Producer`: provides functionality for producing files into the Network
-    - `Consumer`: provides functionality for consuming data from the Network
+    - `Producer`: provides functionality for producing storage space into the Network
+    - `Consumer`: provides functionality for consuming storage space from the Network
 - User __MUST__ init the `Daemon` with: `open-bucket init`. The `init` command will walk user through the following steps:
     - Authentication (Register/Login)
     - Define the Config file
@@ -15,32 +15,32 @@
     - Ask user to allow the `Daemon` to start `Producer` | `Consumer`
 - If user re-init `Daemon`, all current configs will be overridden
 
-## Producing Files to the Network
-- User __MUST__ start the `Producer` first by using: `open-bucket producer start`. `Daemon` will ignore this command if the `Producer` has already started
-- User can produce files to the Network with 2 ways:
-    - __COPY__ files directly into the __local Producer directory__. Based on the `Producer` status, the following cases will be considered:
-        - [If the `Producer` status is __STARTED__]: the `Producer` will detect file changes and automatically upload the unsynced files into the Network with __default availability is 2__
-        - [If the `Producer` status is __STOPPED__]: Nothing will happen. But when user start the `Producer`, `Producer` will ask if user wanted to produce the unsynced file to the Network
-            - [If __YES__]: the `Producer` will produce the files to the Network
-            - [If __NO__]: the `Producer` will delete the files on __local Producer directory__
-    - Use `open-bucket producer add` command
-- When user delete their files on __local Producer directory__:
+## Consuming storage space from the Network
+- User __MUST__ start the `Comsumer` first by using: `open-bucket consumer start`. `Daemon` will ignore this command if the `Consumer` has already started
+- User can consume storage from the Network with 2 ways:
+    - __COPY__ files directly into the __local Consumer directory__. Based on the `Consumer` status, the following cases will be considered:
+        - [If the `Consumer` status is __STARTED__]: the `Consumer` will detect file changes and automatically upload the unsynced files into the Network with __default availability is 2__
+        - [If the `Consumer` status is __STOPPED__]: Nothing will happen. But when user start the `Consumer`, `Consumer` will ask if user wanted to upload the unsynced file to the Network
+            - [If __YES__]: the `Consumer` will consume the storage space from the Network to storage files
+            - [If __NO__]: the `Consumer` will delete the files on __local Consumer directory__
+    - Use `open-bucket consumer add` command
+- When user delete their files on __local Consumer directory__:
     - [If the file is __completely uploaded__ into the Network]: The files won't be deleted on the Network, it just got deleted locally
     - [If the file is __NOT completely uploaded__ into the Network]: the file will be removed on the Network
 - A file is considered __completely uploaded into the Network__ when its __actual availability__ is matched with is __desired availability__ defined by user
-- The __availability__ is calculated by the `Tracker`. `Tracker` will calculate the __availability__ based on the number of consumer consuming shards of the file
-- User can delete their file on the Network by using `open-bucket producer rm` command
-- User can download their file on the Network by using `open-bucket producer cp` command
-- Files produced into the Network will have their metadata saved by the `Tracker`. User can browse their files on the network by using `open-bucket producer ls` command
+- The __availability__ is calculated by the `Tracker`. `Tracker` will calculate the __availability__ based on the number of producer is producing shards of the file
+- User can delete their file on the Network by using `open-bucket consumer rm` command
+- User can download their file on the Network by using `open-bucket consumer cp` command
+- Files produced into the Network will have their metadata saved by the `Tracker`. User can browse their files on the network by using `open-bucket consumer ls` command
 
-## Consuming Data from the Network
-- User __MUST__ start the `Consumer` first by using: `open-bucket consumer start`. `Daemon` will ignore this command if the `Consumer` has already started
-- __Local Consumer directory__ will have its limit defined by user.
-    - If the limit is reached, `Consumer` stop consuming data from the Network
-    - If user config the limit to be lower than __local Consumer directory__ size, __local Consumer directory__ directory will be truncated to match with the desired litmit
-    - Invalid __limit__ field will disable the `Consumer`. __limit__ value should be in format: `${consumeSize} GB`
-- Data in __local Consumer directory__ will be the __encypted shards__ of the files that have been produced into the Network
-- Shards inside __local Consumer directory__ __MUST NOT__ be modified, `Consumer` will ensure the consuming shards hasn't been modified. For each modified/deleted shard, `Consumer` will ask the `Tracker` to remove current user from the list of the shard consumer & remove the shard locally
+## Providing storage space to the Network
+- User __MUST__ start the `producer` first by using: `open-bucket producer start`. `Daemon` will ignore this command if the `Producer` has already started
+- __Local Producer directory__ will have its limit defined by user.
+    - If the limit is reached, `Producer` stop consuming data from the Network
+    - If user config the limit to be lower than __local producer directory__ size, __local Producer directory__ directory will be truncated to match with the desired litmit
+    - Invalid __limit__ field will disable the `Producer`. __limit__ value should be in format: `${produceSize} GB`
+- Data in __local producer directory__ will be the __encypted shards__ of the files that have been uploaded into the Network
+- Shards inside __local Producer directory__ __MUST NOT__ be modified, `Producer` will ensure the providing shards hasn't been modified. For each modified/deleted shard, `Producer` will ask the `Tracker` to remove current user from the list of the shard provider & remove the shard locally
 
 # Client
 - When user install the `Client` before installing the `Daemon`, `Client` will ask user permission to install the `Daemon`
@@ -61,16 +61,16 @@ TODO
         "token": "User Authentication Token",
         "privateKey": "User private key"
     },
-    "producer": {
-        "directory": "~/open-bucket/produce",
-        "_status": "STOPPED",
-        "defaultAvailability": 2,
-        "startOnStartup": false
-    },
     "consumer": {
         "directory": "~/open-bucket/consume",
-        "limit": "5 GB",
-        "_status": "STOPPED",
+        "defaultAvailability": 4,        
+        "port": 1234,
+        "startOnStartup": false
+    },
+    "producer": {
+        "directory": "~/open-bucket/produce",
+        "limit": "1 GB",
+        "port": 5678,
         "startOnStartup": false
     },
     "_updatedAt": "1525147564"
@@ -173,39 +173,37 @@ Using this feature will change user authentication information on the Config fil
 - Responses:
     - 200 - {"msg": "Change authentication configuration successfully"}
 
-## Producer
-### Start Producer:
-1) `Daemon` starts the `Producer`.
-2) `Producer` starts the `PWatcher`.
-3) `Daemon` change the `Producer` status in config file to `STARTED`.
-#### Command: `open-bucket producer start`
-#### REST API: `POST /v1/producer/start`
+## Consumer
+### Start Consumer:
+1) `Daemon` starts the `Consumer`.
+2) `Consumer` starts the `PWatcher`.
+#### Command: `open-bucket consumer start`
+#### REST API: `POST /v1/consumer/start`
 - Responses:
-    - 200 - {"msg": "Producer started"}
-    - 200 - {"msg": "Producer had already started"}
+    - 200 - {"msg": "Consumer started"}
+    - 200 - {"msg": "Consumer had already started"}
 
-### Stop Producer:
-1) `Producer` stops the `PWatcher`.
-2) `Daemon` stops the `Producer`.
-3) `Daemon` changes `Producer` status in config file to `STOPPED`.
-#### Command: `open-bucket producer stop`
-#### REST API: `POST /v1/producer/stop`
+### Stop Consumer:
+1) `Consumer` stops the `PWatcher`.
+2) `Daemon` stops the `Consumer`.
+#### Command: `open-bucket consumer stop`
+#### REST API: `POST /v1/consumer/stop`
 - Responses:
     - 200 - {"msg": "Producer stopped"}
     - 200 - {"msg": "Producer had already stopped"}
 
-### Produce a file to the Network:
-1) Copy the file to __local Producer directory__.
-2) `PWatcher` will detect the changes and notify Producer to upload the file.
-3) `Producer` upload the file:
+### Consumer storage space from the Network:
+1) Copy the file to __local Consumer directory__.
+2) `PWatcher` will detect the changes and notify Consumer to upload the file.
+3) `Consumer` upload the file:
     - Get __defaultAvailability__ in the Config file
-    - `Producer` will attemp to encrypt & shard the file.
-    - Then, Producer tell the `Tracker` that it need to upload a file.
-    - The `Tracker` then form __contracts__ between the user and available consumers & returns to `Producer` a list of consumers.
-    - After the `Tracker` returns a list of consumers, `Producer` upload file shards to those consumers.
-4) After the file has been completely uploaded into the network, Producer then notify the user.
-5) Finally Producer delete the file if `deleteLocalOnComplete` option is specified and notify user.
-#### Command: `open-bucket producer add [options] </path/to/file>`
+    - `Consumer` will attemp to encrypt & shard the file.
+    - Then, Consumer tell the `Tracker` that it need to upload a file.
+    - The `Tracker` then form __contracts__ between the user and available producers & returns to `Consumer` a list of producers.
+    - After the `Tracker` returns a list of producers, `Consumer` upload file shards to those producers.
+4) After the file has been completely uploaded into the network, Consumer then notify the user.
+5) Finally Consumer delete the file if `deleteLocalOnComplete` option is specified and notify user.
+#### Command: `open-bucket consumer add [options] </path/to/file>`
 - Options:
     ```
     -d, --delete-on-complete        Delete the file on local Producer directory on upload complete
@@ -228,26 +226,26 @@ Using this feature will change user authentication information on the Config fil
     ```
 
 ### Remove a file from the Network:
-1) `Producer` will atempt to validate inputs from user based on the following rules:
+1) `Consumer` will atempt to validate inputs from user based on the following rules:
     - __fileId__: must be a string, this field will have higher priority over __remotePath__
     - __remotePath__: must be a valid path string, this field will be ignored if __fileId__ is specified
 2) Delete the local file.
-    - [If the local file is existing]: `PWatcher` will detect the changes & notify `Producer` to trigger the removing file process
-    - [If the local file is __NOT__ existing]: trigger the removing file process of the `Producer` manually
-3) `Producer` delete the file on the network:
-    - `Producer` tells the `Tracker` that it need to remove the file from the network
-    - The `Tracker` modify the contract between the user & consumers
+    - [If the local file is existing]: `PWatcher` will detect the changes & notify `Consumer` to trigger the removing file process
+    - [If the local file is __NOT__ existing]: trigger the removing file process of the `Consumer` manually
+3) `Consumer` delete the file on the network:
+    - `Consumer` tells the `Tracker` that it need to remove the file from the network
+    - The `Tracker` modify the contract between the user & producers
     - The `Tracker` will tell all consumers of the file to delete all the shards
-    - Consumers notify the `Tracker` after removing the shards successfully
-    - After the `Tracker` confirm that all the shards has been deleted, it will notify to the `Producer`
-4) After receiving delete confirmation from the `Tracker`, `Producer` will notify the `Client`
-#### Command: `open-bucket producer rm </path/to/file/from/Producer/dir | fileId>`
-#### REST API: `POST /v1/producer/files/remove`
+    - Providers notify the `Tracker` after removing the shards successfully
+    - After the `Tracker` confirm that all the shards has been deleted, it will notify to the `Consumer`
+4) After receiving delete confirmation from the `Tracker`, `Consumer` will notify the `Client`
+#### Command: `open-bucket consumer rm </path/to/file/from/Producer/dir | fileId>`
+#### REST API: `POST /v1/consumer/files/remove`
 - Request Body:
     ```json
     {
         "fileId": "fileId",
-        "remotePath": "/path/to/file/from/remote/Producer/dir"
+        "remotePath": "/path/to/file/from/remote/Consumer/dir"
     }
     ```
 - Responses:
@@ -259,18 +257,18 @@ Using this feature will change user authentication information on the Config fil
     - __fileId__: must be a string, this field will have higher priority over __remotePath__
     - __remotePath__: must be a valid path string, this field will be ignored if __fileId__ is specified
     - __destination__: required, must be a valid path string
-2) `Producer` tell `Tracker` that it need to download all the shards of the file `fileId`
-3) The `Tracker` then modify the contract between the user & consumer, then return the list of consumers to the `Producer`
-4) `Producer` then will start receiving shards from the consumers & report speed as well as process to the `Client`
-5) After all shards are downloaded, `Producer` will resemble the shards into original file
-6) `Producer` notify `Client` to notify user that the file is downloaded
-#### Command: `open-bucket producer cp </path/to/file/from/remote/Producer/dir | fileId> </destination/dir>`
-#### REST API: `POST /v1/producer/files/download`
+2) `Consumer` tell `Tracker` that it need to download all the shards of the file `fileId`
+3) The `Tracker` then modify the contract between the user & producer, then return the list of producers to the `Consumer`
+4) `Consumer` then will start receiving shards from the producers & report speed as well as process to the `Client`
+5) After all shards are downloaded, `Consumer` will resemble the shards into original file
+6) `Consumer` notify `Client` to notify user that the file is downloaded
+#### Command: `open-bucket consumer cp </path/to/file/from/remote/Consumer/dir | fileId> </destination/dir>`
+#### REST API: `POST /v1/consumer/files/download`
 - Request Body:
     ```json
     {
         "fileId": "fileId",
-        "remotePath": "/path/to/file/from/remote/Producer/dir",
+        "remotePath": "/path/to/file/from/remote/Consumer/dir",
         "destination": "/path/to/local/dir"
     }
     ```
@@ -278,22 +276,23 @@ Using this feature will change user authentication information on the Config fil
     - 200 - {"msg": "Downloading file `fileId | filePath` to `/destination/dir`"}
     - 400 - {"msg": "File `fileId | filePath` not exists"}
 
-### Change Producer config:
-1) `Producer` will validate the input based on the following rules:
+### Change Comsumer config:
+1) `Consumer` will validate the input based on the following rules:
     - __directory__: current user MUST have `read & write permission` to this dir
-    - __defaultAvailability__: must be a number
+    - __defaultAvailability__: must be a number, greater than 3.
+    - __port__: must be a number
     - __startOnStartup__: must be `true` or `false`
-2) After all fields has passed their validation rules, `Producer` will attemp to do the following actions:
+2) After all fields has passed their validation rules, `Consumer` will attemp to do the following actions:
     - [If __directory__ is changed]: 
         - Move all current files in the old directory to the new one.
         - Change the Config file
     - [If __defaultAvailability__ is changed]: Change the Config file
     - [If __startOnStartup__ is changed]: 
-        - Make user OS to run `open-bucket producer start` on startup
+        - Make user OS to run `open-bucket consumer start` on startup
         - Change the Config file  
 
 If any of those steps failed, all the changes will be rolled back.
-#### Command: `open-bucket producer config`
+#### Command: `open-bucket consumer config`
 > _This command uses __interactive mode__ by default._
 - Options:
     ```
@@ -302,12 +301,13 @@ If any of those steps failed, all the changes will be rolled back.
     -a, --default-availability <number>    Specify default availability used when upload file
     -s, --start-on-startup                 Specify to start Producer on startup
     ```
-#### REST API: `POST /v1/producer/configs`
+#### REST API: `POST /v1/consumer/configs`
 - Request body:
     ```json
     {
-        "directory": "~/open-bucket/produce",
+        "directory": "~/open-bucket/consume",
         "defaultAvailability": 2,
+        "port": 1234,
         "startOnStartup": true
     }
     ```
@@ -316,7 +316,7 @@ If any of those steps failed, all the changes will be rolled back.
     - 400 - {"msg": "Invalid directory"}
 
 ### Change file metadata on Tracker:
-1) `Producer` will validate the input based on the following rules:
+1) `Consumer` will validate the input based on the following rules:
     - __fileId__: required, must be a string
     - __remotePath__: must be a valid path string
     - __availability__: must be a number
@@ -324,7 +324,7 @@ If any of those steps failed, all the changes will be rolled back.
     - [If __remotePath__ is specified]: `Tracker` change file metadata
     - [If __availability__ is specified]: `Tracker` attempt to add/remove consumers of the file based on the new availability
 3) Tracker notify `Producer` when the process is done.
-#### Command: `open-bucket producer edit [options] <fileId>`
+#### Command: `open-bucket consumer edit [options] <fileId>`
 > _This command uses __interactive mode__ by default._
 - Options:
     ```
@@ -332,7 +332,7 @@ If any of those steps failed, all the changes will be rolled back.
     -r, --remotePath <dirPath>             Specify new remote path to file
     -a, --availability  <number>           Specify new availability number of the file
     ```
-#### REST API: `POST /v1/producer/edit`
+#### REST API: `POST /v1/consumer/edit`
 - Request body:
     ```json
     {
@@ -346,12 +346,12 @@ If any of those steps failed, all the changes will be rolled back.
     - 400 - {"msg": "Invalid directory"}
 
 ### Browse files on the network:
-#### Command: `open-bucket producer ls`
+#### Command: `open-bucket consumer ls`
 - Options:
     ```
     -l, --local                 Shows files metadata on local Producer directory
     ```
-#### REST API: `GET /v1/producer/files`
+#### REST API: `GET /v1/consumer/files`
 - Responses:
     - 200
     ```json
@@ -380,25 +380,25 @@ If any of those steps failed, all the changes will be rolled back.
     ```
 
 
-## Consumer
-### Change Consumer config:
-1) `Consumer` will validate the input based on the following rules:
+## Producer
+### Change Producer config:
+1) `producer` will validate the input based on the following rules:
     - __directory__: current user MUST have `read & write permission` to this dir
     - __limit__: the value must have format: `${consumeSize} GB`
     - __startOnStartup__: must be `true` or `false`
-2) After all fields has passed their validation rules, `Consumer` will attempt to do the following actions:
+2) After all fields has passed their validation rules, `Producer` will attempt to do the following actions:
     - [If __directory__ is changed]: 
         - Move all current files in the old directory to the new one.
         - Change the Config file
     - [If __limit__ is changed]: 
         - `Consumer` will attempt to truncate the dir
-        - For each truncated shard, CWatcher will watch the changes and notify `Consumer` to trigger the removing file process
+        - For each truncated shard, CWatcher will watch the changes and notify `Producer` to trigger the removing file process
     - [If __startOnStartup__ is changed]: 
-        - Make user OS to run `open-bucket consumer start` on startup
+        - Make user OS to run `open-bucket producer start` on startup
         - Change the Config file  
 
 If any of those steps failed, all the changes will be rolled back.
-#### Command: `open-bucket consumer config`
+#### Command: `open-bucket producer config`
 > _This command uses __interactive mode__ by default._
 - Options:
     ```
@@ -407,7 +407,7 @@ If any of those steps failed, all the changes will be rolled back.
     -l, --limit <number>                   Specify limit
     -s, --start-on-startup                 Specify to start Producer on startup
     ```
-#### REST API: `POST /v1/consumer/configs`
+#### REST API: `POST /v1/producer/configs`
 - Request body:
     ```json
     {
