@@ -17,7 +17,7 @@
 
 ## Consuming storage space from the Network
 - User __MUST__ start the `Comsumer` first by using: `open-bucket consumer start`. `Daemon` will ignore this command if the `Consumer` has already started
-- User can consum storage from the Network with 2 ways:
+- User can consume storage from the Network with 2 ways:
     - __COPY__ files directly into the __local Consumer directory__. Based on the `Consumer` status, the following cases will be considered:
         - [If the `Consumer` status is __STARTED__]: the `Consumer` will detect file changes and automatically upload the unsynced files into the Network with __default availability is 2__
         - [If the `Consumer` status is __STOPPED__]: Nothing will happen. But when user start the `Consumer`, `Consumer` will ask if user wanted to upload the unsynced file to the Network
