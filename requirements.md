@@ -69,7 +69,7 @@ TODO
     },
     "producer": {
         "directory": "~/open-bucket/produce",
-        "limit": "1 GB",
+        "limit": "5 GB",
         "port": 5678,
         "startOnStartup": false
     },
