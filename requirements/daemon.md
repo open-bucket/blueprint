@@ -28,6 +28,7 @@
     - If the remaining Ether is not enough to renew on new month, the contract will be terminated on 48 hours.
     - If the remaining Ether is not enough to pay consumers for a download request, the download request will be denied.
 - Producers can __withdraw__ Ether from the contract.
+    - When a producer doesn't serve a file for 2 days, Tracker will automatically remove it from the producer list of that file.
 - Tracker keep track of the data flow in OB Network & transfer Ether from consumer to producers inside a contract.
     - For each download, Tracker transfer an ammount of Ether (based on GB downloaded) from consumer to producers.
     - For each month, Tracker transfer an amount of Ether (based on GB stored) from consumer to producers.
@@ -36,7 +37,7 @@
 # Funtionality
 
 ## Daemon
-### Init
+### Configs
 1) [Optional] Add default Ethereum account to Wallet.
 2) Define config file:
     - [Optional] Request user define Consumer config.
@@ -46,15 +47,15 @@
 ### Config file
 ```json
 {
+    "wallet": {
+        "secretPath": "path/to/your/seed/password"
+    },
     "consumer": {
-        "directory": "~/open-bucket/producer-space",
-        "startOnStartup": false
+        "directory": "~/open-bucket/producer-space"
     },
     "producer": {
         "directory": "~/open-bucket/consumer-space",
-        "limit": "5 GB",
-        "account": "user Ethereum account identifier",
-        "startOnStartup": false
+        "limit": 5
     }
 }
 ```
@@ -113,6 +114,7 @@
 4) Start Producer.
 #### Notes:
 - When a producer receives a shard, it send shard's MD5 hash to Tracker for confirmation. Tracker will increase the file's availability if the condition are matched
+- When a producer doesn't serve a file for 2 days, Tracker will automatically remove it fron the producer list of that file.
 
 ## Change Producer config:
 1) Validate inputs

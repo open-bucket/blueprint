@@ -3,23 +3,80 @@ _Conventions_:
 - `[Optional]`: Can be skipped if some conditions are met
 
 # Daemon
-## Init:
-1) [Optional] Add default Ethereum account to Wallet: Uses Wallet `add account` functionality
-    - If the default Ethereum account is already exists, skip this step
-2) Define config file:
-    - Request user define Consumer config: Uses Consumer `config` functionality.
-    - Request user define Producer config: Uses Producer `config` functionality.
+## Config:
+1) Define config file:
+- Ask if user wants to config Wallet
+- Request user define Consumer config: Uses Consumer `config` functionality.
+- Request user define Producer config: Uses Producer `config` functionality.
 3) Ask user to allow Daemon to start Producer & Consumer: Perform `obn producer start` & `obn consumer start`
 ### Notes:
-- If user re-init `Daemon`, all current configs will be overridden
-### Command: `obn init`
+- If user re-configs `Daemon`, all current configs will be overridden
+### Command: `obn config`
 
 # Wallet
-TODO
+## Init
+Check the wallet config `secretPath` to see if user has defined the path to their secret & the secret is valid (i.e. login to Eth Network).
+- If all steps are succeeded, init done.
+- If there's error, ask user to add wallet.
+    - User has 2 options to add their Wallet to the Daemon:
+    Notify user: `Daemon will NOT save your information & transfer your information. All your info will be erased when the Daemon is turned off.`
+    - Create new wallet
+        - [Optional] Ask user to input `entropy`. User can skip this.
+        - Provide user the generated `seed` with the notice: `Please write it down on paper or in a password manager, you will need it to access your wallet. Do not let anyone see this seed or they can take your Ether. `
+        - Promt user to input their password with the notice: `Please enter a password to encrypt your seed while the Daemon is functioning`
+    - Restore their existing wallet. Options: 
+        - input the `seed` & `password`
+        - config path to secret file
+### Command: `obn wallet init`
+> _This command uses __interactive mode__ by default._
+- Options:
+    ```
+    -d, --detach                           Disable interactive mode.
+    -s, --seed <string>                    Specify Seed of your Eth wallet
+    -p, --password <string>                Specify password of your Eth wallet
+    ```
+### REST API: `POST /v1/wallet/init`
+- Request body:
+    ```json
+    {
+        "seed": "your seed",
+        "password": "your password"
+    }
+    ```
+- Responses:
+    - 200 - {"msg": "Wallet initialised"}
+    - 400 - {"msg": "Invalid information"}
+
+
+## Config
+1) Request user define the __path__ to their `seed` & `password`. The file should contain texts that has format:
+```json
+{
+    "seed": "your seed",
+    "password": "your password"
+}
+```
+### Command: `obn wallet config`
+> _This command uses __interactive mode__ by default._
+- Options:
+    ```
+    -d, --detach                           Disable interactive mode.
+    -p, --path <string>                    Path to your secret file
+    ```
+### REST API: `POST /v1/wallet/config`
+- Request body:
+    ```json
+    {
+        "path": "path/to/your/secret/file"
+    }
+    ```
+- Responses:
+    - 200 - {"msg": "Applied new Wallet config"}
+    - 400 - {"msg": "Invalid information"}
 
 # Consumer
 ## Start Consumer:
-1) Read the config file.
+1) Apply config from the config file.
 2) [Optional] Request user to add default Ethereum account to Wallet.
     - If the default Ethereum is already exists, skip this step
 3) Start Consumer:
@@ -314,6 +371,7 @@ TODO
 - Tracker keep track of all available Producer & Consumer.
 - Tracker assign each producer a `nice` point. `nice` points is calculated based on producer's availability & network speed.
 - Tracker rank file based on their tier, files with tier 3 (Premium) have the highest priority.
+
 
 ## Contract termination process:
 TODO
