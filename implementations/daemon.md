@@ -61,7 +61,7 @@ Check the wallet config `secretPath` to see if user has defined the path to thei
 - Options:
     ```
     -d, --detach                           Disable interactive mode.
-    -p, --path <string>                    Path to your secret file
+    -p, --secret-file-path <string>        Specify path to your secret file.
     ```
 ### REST API: `POST /v1/wallet/config`
 - Request body:
@@ -77,8 +77,7 @@ Check the wallet config `secretPath` to see if user has defined the path to thei
 # Consumer
 ## Start Consumer:
 1) Apply config from the config file.
-2) [Optional] Request user to add default Ethereum account to Wallet.
-    - If the default Ethereum is already exists, skip this step
+2) Init Wallet
 3) Start Consumer:
     - Daemon starts the Consumer.
     - Consumer starts PWatcher.
@@ -203,15 +202,12 @@ Check the wallet config `secretPath` to see if user has defined the path to thei
 
 ## Change Consumer config:
 1) Consumer validates inputs based on the following rules:
-    - __directory__: current user MUST have _
-    _read & write permission__ to this dir
-    - __defaultAvailability__: must be a number
+    - __directory__: current user MUST have __read & write permission__ to this dir
     - __startOnStartup__: must be `true` or `false`
 2) After all fields has passed their validation rules, Consumer does the following actions:
     - If __directory__ is changed: 
         - Move all current shards in the old directory to the new one.
         - Change the Config file
-    - If __defaultAvailability__ is changed: Change the Config file
     - If __startOnStartup__ is changed: 
         - Make user OS to run `obn consumer start` on startup
         - Change the Config file  
@@ -223,7 +219,6 @@ If any of those steps failed, all the changes will be rolled back.
     ```
     -d, --detach                           Disable interactive mode.
     -r, --directory <dirPath>              Specify Consumer space
-    -a, --default-availability <number>    Specify default availability used when upload file
     -s, --start-on-startup                 Specify to start Consumer on startup
     ```
 ### REST API: `POST /v1/consumer/configs`
@@ -231,7 +226,6 @@ If any of those steps failed, all the changes will be rolled back.
     ```json
     {
         "directory": "~/obn/consumer-space",
-        "defaultAvailability": 2,
         "startOnStartup": true
     }
     ```
@@ -302,11 +296,8 @@ TODO
 # Producer
 ## Start Producer:
 1) Read the config file
-2) [Optional] Request user to add default Ethereum account to Wallet
-    - If the default Ethereum is already exists, skip this step
-3) [Optional] Request user to choose producer Ethereum account from Wallet
-    - If user already add it in Producer config, skip this step
-4) Start Producer:
+2) Init Wallet
+3) Start Producer:
     - Daemon starts the Producer.
     - Producer starts the PWatcher.
 ### Notes:
@@ -325,16 +316,16 @@ TODO
 ## Change Producer config:
 1) Producer validates the input based on the following rules:
     - __directory__: current user MUST have `read & write permission` to this dir
-    - __limit__: the value must have format: `${consumeSize} GB`
+    - __size__: the value must have format: `${consumeSize}${unit}`
     - __account__: must be valid account identifier inside the self hosted wallet.
     - __startOnStartup__: must be `true` or `false`
 2) Next, Producer does the following actions:
     - If __directory__ is changed:
         - Move all current files from the old directory to the new one.
         - Change the Config file
-    - If __limit__ is changed: 
-        - If user config the limit to be lower than __Producer space__ size, __Producer space__ directory will be truncated to match with the desired litmit. All contract related to the truncated shards will be terminated.
-        - If the limit is reached, Producer stop consuming data from the Network
+    - If __size__ is changed: 
+        - If user config the size to be lower than __Producer space__ size, __Producer space__ directory will be truncated to match with the desired size. All contract related to the truncated shards will be terminated.
+        - If the Producer space is full (actual size >= defined size), Producer stop consuming data from the Network
     - If __account__ is changed: TODO
     - If __startOnStartup__ is changed: 
         - Make user OS to run `obn producer start` on startup
@@ -347,7 +338,7 @@ If any of those steps failed, all the changes will be rolled back.
     ```
     -d, --detach                           Disable interactive mode.
     -r, --directory <dirPath>              Specify Producer space directory
-    -l, --limit <number>                   Specify limit
+    -z, --size <number>                    Specify size of Producer space directory
     -s, --start-on-startup                 Specify to start Producer on startup
     ```
 ### REST API: `POST /v1/producer/configs`
@@ -355,7 +346,7 @@ If any of those steps failed, all the changes will be rolled back.
     ```json
     {
         "directory": "~/obn/producer-space",
-        "limit": "2 GB",
+        "size": "2 GB",
         "startOnStartup": true
     }
     ```

@@ -55,7 +55,7 @@
     },
     "producer": {
         "directory": "~/open-bucket/consumer-space",
-        "limit": 5
+        "size": "5GB"
     }
 }
 ```
