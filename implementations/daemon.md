@@ -1,27 +1,107 @@
+# Layout:
+- [Daemon](#Daemon)
+    - [Daemon Config](#Daemon-config)
+- [Wallet](#Walelt)
+    - [Wallet init](#Wallet-init)
+    - [Wallet Config](#Wallet-config)
+- [Consumer](#Consumer)
+    - [Start Consumer](#Start-Consumer)
+    - [Stop Consumer](#Stop-Consumer)
+    - [Consume storage from OBN](#Consume-storage-from-OBN)
+    - [Remove a file from OBN](#Remove-a-file-from-OBN)
+    - [Download data from OBN](#Download-data-from-OBN)
+    - [Apply new Consumer config](#Apply-new-Consumer-config)
+    - [Change file metadata on Tracker](#Change-file-metadata-on-Tracker)
+    - [Browse files on OBN](#Browse-files-on-OBN)
+    - [Consumer contract termination process](#Consumer-contract-termination-process)
+- [Producer](#Producer)
+    - [Start Producer](#Start-Producer)
+    - [Apply new Producer config](#Apply-new-Producer-config)
+    - [Producer contract termination process](#Producer-contract-termination-process)
+- [Tracker](#Tracker)
+    - [Tracker Contract termination process](#Tracker-Contract-termination-process)
+
+
 _Conventions_:
 - `[*]`: Likely to change in the future
 - `[Optional]`: Can be skipped if some conditions are met
 
 # Daemon
-## Init:
-1) [Optional] Add default Ethereum account to Wallet: Uses Wallet `add account` functionality
-    - If the default Ethereum account is already exists, skip this step
-2) Define config file:
-    - Request user define Consumer config: Uses Consumer `config` functionality.
-    - Request user define Producer config: Uses Producer `config` functionality.
+## Daemon config:
+1) Define config file:
+- Ask if user wants to config Wallet
+- Request user define Consumer config: Uses Consumer `config` functionality.
+- Request user define Producer config: Uses Producer `config` functionality.
 3) Ask user to allow Daemon to start Producer & Consumer: Perform `obn producer start` & `obn consumer start`
 ### Notes:
-- If user re-init `Daemon`, all current configs will be overridden
-### Command: `obn init`
+- If user re-configs `Daemon`, all current configs will be overridden
+### Command: `obn config`
 
 # Wallet
-TODO
+## Wallet init
+Check the wallet config `secretPath` to see if user has defined the path to their secret & the secret is valid (i.e. login to Eth Network).
+- If all steps are succeeded, init done.
+- If there's error, ask user to add wallet.
+    - User has 2 options to add their Wallet to the Daemon:
+    Notify user: `Daemon will NOT save your information & transfer your information. All your info will be erased when the Daemon is turned off.`
+    - Create new wallet
+        - [Optional] Ask user to input `entropy`. User can skip this.
+        - Provide user the generated `seed` with the notice: `Please write it down on paper or in a password manager, you will need it to access your wallet. Do not let anyone see this seed or they can take your Ether. `
+        - Promt user to input their password with the notice: `Please enter a password to encrypt your seed while the Daemon is functioning`
+    - Restore their existing wallet. Options: 
+        - input the `seed` & `password`
+        - config path to secret file
+### Command: `obn wallet init`
+> _This command uses __interactive mode__ by default._
+- Options:
+    ```
+    -d, --detach                           Disable interactive mode.
+    -s, --seed <string>                    Specify Seed of your Eth wallet
+    -p, --password <string>                Specify password of your Eth wallet
+    ```
+### REST API: `POST /v1/wallet/init`
+- Request body:
+    ```json
+    {
+        "seed": "your seed",
+        "password": "your password"
+    }
+    ```
+- Responses:
+    - 200 - {"msg": "Wallet initialised"}
+    - 400 - {"msg": "Invalid information"}
+
+
+## Wallet config
+1) Request user define the __path__ to their `seed` & `password`. The file should contain texts that has format:
+```json
+{
+    "seed": "your seed",
+    "password": "your password"
+}
+```
+### Command: `obn wallet config`
+> _This command uses __interactive mode__ by default._
+- Options:
+    ```
+    -d, --detach                           Disable interactive mode.
+    -p, --secret-file-path <string>        Specify path to your secret file.
+    ```
+### REST API: `POST /v1/wallet/config`
+- Request body:
+    ```json
+    {
+        "path": "path/to/your/secret/file"
+    }
+    ```
+- Responses:
+    - 200 - {"msg": "Applied new Wallet config"}
+    - 400 - {"msg": "Invalid information"}
 
 # Consumer
 ## Start Consumer:
-1) Read the config file.
-2) [Optional] Request user to add default Ethereum account to Wallet.
-    - If the default Ethereum is already exists, skip this step
+1) Apply config from the config file.
+2) Init Wallet
 3) Start Consumer:
     - Daemon starts the Consumer.
     - Consumer starts PWatcher.
@@ -144,17 +224,14 @@ TODO
     - 200 - {"msg": "Downloading file `fileId | filePath` to `/destination/dir`"}
     - 400 - {"msg": "File `fileId | filePath` not exists"}
 
-## Change Consumer config:
+## Apply new Consumer config:
 1) Consumer validates inputs based on the following rules:
-    - __directory__: current user MUST have _
-    _read & write permission__ to this dir
-    - __defaultAvailability__: must be a number
+    - __directory__: current user MUST have __read & write permission__ to this dir
     - __startOnStartup__: must be `true` or `false`
 2) After all fields has passed their validation rules, Consumer does the following actions:
     - If __directory__ is changed: 
         - Move all current shards in the old directory to the new one.
         - Change the Config file
-    - If __defaultAvailability__ is changed: Change the Config file
     - If __startOnStartup__ is changed: 
         - Make user OS to run `obn consumer start` on startup
         - Change the Config file  
@@ -166,7 +243,6 @@ If any of those steps failed, all the changes will be rolled back.
     ```
     -d, --detach                           Disable interactive mode.
     -r, --directory <dirPath>              Specify Consumer space
-    -a, --default-availability <number>    Specify default availability used when upload file
     -s, --start-on-startup                 Specify to start Consumer on startup
     ```
 ### REST API: `POST /v1/consumer/configs`
@@ -174,7 +250,6 @@ If any of those steps failed, all the changes will be rolled back.
     ```json
     {
         "directory": "~/obn/consumer-space",
-        "defaultAvailability": 2,
         "startOnStartup": true
     }
     ```
@@ -245,11 +320,8 @@ TODO
 # Producer
 ## Start Producer:
 1) Read the config file
-2) [Optional] Request user to add default Ethereum account to Wallet
-    - If the default Ethereum is already exists, skip this step
-3) [Optional] Request user to choose producer Ethereum account from Wallet
-    - If user already add it in Producer config, skip this step
-4) Start Producer:
+2) Init Wallet
+3) Start Producer:
     - Daemon starts the Producer.
     - Producer starts the PWatcher.
 ### Notes:
@@ -265,19 +337,19 @@ TODO
     - 200 - {"msg": "Producer started"}
     - 200 - {"msg": "Producer had already started"}
 
-## Change Producer config:
+## Apply new Producer config:
 1) Producer validates the input based on the following rules:
     - __directory__: current user MUST have `read & write permission` to this dir
-    - __limit__: the value must have format: `${consumeSize} GB`
+    - __size__: the value must have format: `${consumeSize}${unit}`
     - __account__: must be valid account identifier inside the self hosted wallet.
     - __startOnStartup__: must be `true` or `false`
 2) Next, Producer does the following actions:
     - If __directory__ is changed:
         - Move all current files from the old directory to the new one.
         - Change the Config file
-    - If __limit__ is changed: 
-        - If user config the limit to be lower than __Producer space__ size, __Producer space__ directory will be truncated to match with the desired litmit. All contract related to the truncated shards will be terminated.
-        - If the limit is reached, Producer stop consuming data from the Network
+    - If __size__ is changed: 
+        - If user config the size to be lower than __Producer space__ size, __Producer space__ directory will be truncated to match with the desired size. All contract related to the truncated shards will be terminated.
+        - If the Producer space is full (actual size >= defined size), Producer stop consuming data from the Network
     - If __account__ is changed: TODO
     - If __startOnStartup__ is changed: 
         - Make user OS to run `obn producer start` on startup
@@ -290,7 +362,7 @@ If any of those steps failed, all the changes will be rolled back.
     ```
     -d, --detach                           Disable interactive mode.
     -r, --directory <dirPath>              Specify Producer space directory
-    -l, --limit <number>                   Specify limit
+    -z, --size <number>                    Specify size of Producer space directory
     -s, --start-on-startup                 Specify to start Producer on startup
     ```
 ### REST API: `POST /v1/producer/configs`
@@ -298,7 +370,7 @@ If any of those steps failed, all the changes will be rolled back.
     ```json
     {
         "directory": "~/obn/producer-space",
-        "limit": "2 GB",
+        "size": "2 GB",
         "startOnStartup": true
     }
     ```
@@ -315,5 +387,6 @@ TODO
 - Tracker assign each producer a `nice` point. `nice` points is calculated based on producer's availability & network speed.
 - Tracker rank file based on their tier, files with tier 3 (Premium) have the highest priority.
 
-## Contract termination process:
+
+## Tracker Contract termination process:
 TODO
