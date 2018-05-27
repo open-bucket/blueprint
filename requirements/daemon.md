@@ -6,7 +6,7 @@
 - Daemon has __CLI__ and __TCP__ interface. User interacts with Daemon through __CLI__, Client interacts with Daemon through __TCP__ interface
 - Daemon have __3 Primary Instances__: Producer, Consumer & Wallet
     - Producer: provides functionality for __producing storage space__ to Open Bucket Network (OBN)
-    - Consumer: provides functionality for __consuming storgae space__ from OBN
+    - Consumer: provides functionality for __consuming storage space__ from OBN
     - Wallet: provides functionality for managing user's Etherum accounts.
 - Uses [Inquirer.js](https://github.com/SBoudrias/Inquirer.js) for interactive command line user interfaces
 ### Watchers
@@ -48,14 +48,17 @@
 ```json
 {
     "wallet": {
-        "secretPath": "path/to/your/seed/password"
+        "secretFilePath": "path/to/your/seed/password"
     },
     "consumer": {
-        "directory": "~/open-bucket/producer-space"
+        "directory": "~/open-bucket/consumer-space",
+        "startOnStartup": false
     },
     "producer": {
-        "directory": "~/open-bucket/consumer-space",
-        "size": "5GB"
+        "directory": "~/open-bucket/producer-space",
+        "size": "5GB",
+        "account": "Eth Account"
+        "startOnStartup": false
     }
 }
 ```
@@ -77,7 +80,7 @@
     - User's Ethereum account (choose from Wallet)
     - [Optional] File tier: Free | Basic | Premium
     - [Optional] Desired availability
-    - [Optional] The amount of time the file exists inside OBN. 
+    - [Optional] The amount of time the file exists inside OBN.
 4) Tracker create the Smart Contract & charge user.
 5) Consumer start the upload the file process.
 6) After the file has been completely uploaded into the network, Consumer change the status of the file to UPLOADED.

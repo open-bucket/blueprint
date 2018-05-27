@@ -1,25 +1,25 @@
 # Layout:
-- [Daemon](#Daemon)
-    - [Daemon Config](#Daemon-config)
-- [Wallet](#Walelt)
-    - [Wallet init](#Wallet-init)
-    - [Wallet Config](#Wallet-config)
-- [Consumer](#Consumer)
-    - [Start Consumer](#Start-Consumer)
-    - [Stop Consumer](#Stop-Consumer)
-    - [Consume storage from OBN](#Consume-storage-from-OBN)
-    - [Remove a file from OBN](#Remove-a-file-from-OBN)
-    - [Download data from OBN](#Download-data-from-OBN)
-    - [Apply new Consumer config](#Apply-new-Consumer-config)
-    - [Change file metadata on Tracker](#Change-file-metadata-on-Tracker)
-    - [Browse files on OBN](#Browse-files-on-OBN)
-    - [Consumer contract termination process](#Consumer-contract-termination-process)
-- [Producer](#Producer)
-    - [Start Producer](#Start-Producer)
-    - [Apply new Producer config](#Apply-new-Producer-config)
-    - [Producer contract termination process](#Producer-contract-termination-process)
-- [Tracker](#Tracker)
-    - [Tracker Contract termination process](#Tracker-Contract-termination-process)
+- [Daemon](#daemon)
+    - [Daemon Config](#daemon-config)
+- [Wallet](#wallet)
+    - [Wallet init](#wallet-init)
+    - [Wallet config](#wallet-config)
+- [Consumer](#consumer)
+    - [Start Consumer](#start-consumer)
+    - [Stop Consumer](#stop-consumer)
+    - [Consume storage from OBN](#consume-storage-from-obn)
+    - [Remove a file from OBN](#remove-a-file-from-obn)
+    - [Download data from OBN](#download-data-from-obn)
+    - [Apply new Consumer config](#apply-new-consumer-config)
+    - [Change file metadata on Tracker](#change-file-metadata-on-tracker)
+    - [Browse files on OBN](#browse-files-on-obn)
+    - [Consumer contract termination process](#consumer-contract-termination-process)
+- [Producer](#producer)
+    - [Start Producer](#start-producer)
+    - [Apply new Producer config](#apply-new-producer-config)
+    - [Producer contract termination process](#producer-contract-termination-process)
+- [Tracker](#tracker)
+    - [Tracker Contract termination process](#tracker-contract-termination-process)
 
 
 _Conventions_:
@@ -48,7 +48,7 @@ Check the wallet config `secretPath` to see if user has defined the path to thei
         - [Optional] Ask user to input `entropy`. User can skip this.
         - Provide user the generated `seed` with the notice: `Please write it down on paper or in a password manager, you will need it to access your wallet. Do not let anyone see this seed or they can take your Ether. `
         - Promt user to input their password with the notice: `Please enter a password to encrypt your seed while the Daemon is functioning`
-    - Restore their existing wallet. Options: 
+    - Restore their existing wallet. Options:
         - input the `seed` & `password`
         - config path to secret file
 ### Command: `obn wallet init`
@@ -108,7 +108,7 @@ Check the wallet config `secretPath` to see if user has defined the path to thei
     - Consumer get the file list by sending request to Tracker. The file list then will be compared (by MD5 hash) with the files inside __Consumer space__:
     - If there're __new files__: Add the new files to the in-memory file list & change their status to __PENDING__.
     - If there're __missing files__: Check the current status of the file on Tracker:
-        - If it is __UPLOADED__: do nothing. 
+        - If it is __UPLOADED__: do nothing.
         - If it is __UPLOADING__: TODO
 ### Command: `obn consumer start`
 <!-- TODO: add options to override config values -->
@@ -228,13 +228,14 @@ Check the wallet config `secretPath` to see if user has defined the path to thei
 1) Consumer validates inputs based on the following rules:
     - __directory__: current user MUST have __read & write permission__ to this dir
     - __startOnStartup__: must be `true` or `false`
+    - values with empty value (`null`, `undefined`, `''`) will be ignored
 2) After all fields has passed their validation rules, Consumer does the following actions:
-    - If __directory__ is changed: 
+    - If __directory__ is changed:
         - Move all current shards in the old directory to the new one.
         - Change the Config file
-    - If __startOnStartup__ is changed: 
+    - If __startOnStartup__ is changed:
         - Make user OS to run `obn consumer start` on startup
-        - Change the Config file  
+        - Change the Config file
 
 If any of those steps failed, all the changes will be rolled back.
 ### Command: `obn consumer config`
@@ -343,17 +344,18 @@ TODO
     - __size__: the value must have format: `${consumeSize}${unit}`
     - __account__: must be valid account identifier inside the self hosted wallet.
     - __startOnStartup__: must be `true` or `false`
+    - values with empty value (`null`, `undefined`, `''`) will be ignored
 2) Next, Producer does the following actions:
     - If __directory__ is changed:
         - Move all current files from the old directory to the new one.
         - Change the Config file
-    - If __size__ is changed: 
+    - If __size__ is changed:
         - If user config the size to be lower than __Producer space__ size, __Producer space__ directory will be truncated to match with the desired size. All contract related to the truncated shards will be terminated.
         - If the Producer space is full (actual size >= defined size), Producer stop consuming data from the Network
     - If __account__ is changed: TODO
-    - If __startOnStartup__ is changed: 
+    - If __startOnStartup__ is changed:
         - Make user OS to run `obn producer start` on startup
-        - Change the Config file. 
+        - Change the Config file.
 
 If any of those steps failed, all the changes will be rolled back.
 ### Command: `obn producer config`
