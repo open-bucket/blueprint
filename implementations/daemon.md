@@ -1,9 +1,33 @@
+# Layout:
+- [Daemon](#Daemon)
+    - [Daemon Config](#Daemon-config)
+- [Wallet](#Walelt)
+    - [Wallet init](#Wallet-init)
+    - [Wallet Config](#Wallet-config)
+- [Consumer](#Consumer)
+    - [Start Consumer](#Start-Consumer)
+    - [Stop Consumer](#Stop-Consumer)
+    - [Consume storage from OBN](#Consume-storage-from-OBN)
+    - [Remove a file from OBN](#Remove-a-file-from-OBN)
+    - [Download data from OBN](#Download-data-from-OBN)
+    - [Apply new Consumer config](#Apply-new-Consumer-config)
+    - [Change file metadata on Tracker](#Change-file-metadata-on-Tracker)
+    - [Browse files on OBN](#Browse-files-on-OBN)
+    - [Consumer contract termination process](#Consumer-contract-termination-process)
+- [Producer](#Producer)
+    - [Start Producer](#Start-Producer)
+    - [Apply new Producer config](#Apply-new-Producer-config)
+    - [Producer contract termination process](#Producer-contract-termination-process)
+- [Tracker](#Tracker)
+    - [Tracker Contract termination process](#Tracker-Contract-termination-process)
+
+
 _Conventions_:
 - `[*]`: Likely to change in the future
 - `[Optional]`: Can be skipped if some conditions are met
 
 # Daemon
-## Config:
+## Daemon config:
 1) Define config file:
 - Ask if user wants to config Wallet
 - Request user define Consumer config: Uses Consumer `config` functionality.
@@ -14,7 +38,7 @@ _Conventions_:
 ### Command: `obn config`
 
 # Wallet
-## Init
+## Wallet init
 Check the wallet config `secretPath` to see if user has defined the path to their secret & the secret is valid (i.e. login to Eth Network).
 - If all steps are succeeded, init done.
 - If there's error, ask user to add wallet.
@@ -48,7 +72,7 @@ Check the wallet config `secretPath` to see if user has defined the path to thei
     - 400 - {"msg": "Invalid information"}
 
 
-## Config
+## Wallet config
 1) Request user define the __path__ to their `seed` & `password`. The file should contain texts that has format:
 ```json
 {
@@ -200,7 +224,7 @@ Check the wallet config `secretPath` to see if user has defined the path to thei
     - 200 - {"msg": "Downloading file `fileId | filePath` to `/destination/dir`"}
     - 400 - {"msg": "File `fileId | filePath` not exists"}
 
-## Change Consumer config:
+## Apply new Consumer config:
 1) Consumer validates inputs based on the following rules:
     - __directory__: current user MUST have __read & write permission__ to this dir
     - __startOnStartup__: must be `true` or `false`
@@ -313,7 +337,7 @@ TODO
     - 200 - {"msg": "Producer started"}
     - 200 - {"msg": "Producer had already started"}
 
-## Change Producer config:
+## Apply new Producer config:
 1) Producer validates the input based on the following rules:
     - __directory__: current user MUST have `read & write permission` to this dir
     - __size__: the value must have format: `${consumeSize}${unit}`
@@ -364,5 +388,5 @@ TODO
 - Tracker rank file based on their tier, files with tier 3 (Premium) have the highest priority.
 
 
-## Contract termination process:
+## Tracker Contract termination process:
 TODO
