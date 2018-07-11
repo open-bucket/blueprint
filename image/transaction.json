@@ -1,0 +1,30 @@
+{
+    "hash": "5a42590fbe0a90ee8e8747244d6c84f0db1a3a24e8f1b95b10c9e050990b8b6b",
+    "ver": 1,
+    "vin_sz": 2,
+    "vout_sz": 1,
+    "lock_time": 0,
+    "size": 404,
+    "in": [
+        {
+            "prev_out": {
+                "hash": "3be4ac9728a0823cf5e2deb2e86fc0db2aa503a91d307b42ba76117d79280260",
+                "n": 0
+            },
+            "scriptSig": "30440..."
+        },
+        {
+            "prev_out": {
+                "hash": "7508e6ab259b4df0fd5147ba0c949d81473db4518f81afc5c3f52f91ff6b34e",
+                "n": 0
+            },
+            "scriptSig": "3f3a4ce81..."
+        }
+    ],
+    "out": [
+        {
+            "value": "10.12287097",
+            "scriptPubKey": "OP_DUO OP_HASH160 69e02e18b5705a05dd6b28ed517716c894b3d42e OP_EQUALVERIFY OP_CHECKSIG"
+        }
+    ]
+}
