@@ -261,152 +261,89 @@ Người dùng cần một tài khoản để sử dụng Ethereum. Một tài k
 
 ### Giao dịch và tin nhắn
 
-Nói một cách đơn giản. giao dịch là gói dữ liệu được người gửi ký, dữ liệu đó được gửi từ một tài khoản external. Một giao dịch ethereum chứa địa chỉ người nhận, chữ ký số của người gửi, số tiền ether được gửi đến người nhận, dữ liệu, startgas và gasprice. Địa chỉ nhận là địa chỉ public key của người nhận  còn chữ ký số được dùng để xác thực người gửi. Trường dữ liệu trong giao dịch etherum là trường không bắt buộc phải có và cũng không có chức năng trong hệ thống, tuy nhiên nó có thể được sử dụng bởi máy ảo có opcode (operation code - mã hoạt động) để cung cấp dữ liệu chạy smart contract. Startgas và gasprice dùng để tránh tính huống các vòng lặp tiêu hao hết gas. Mỗi bước tính toán yêu cầu 1 gas, ngoài ra phải trả thêm 1 gas cho mỗi 5 gas tiêu thụ. Mọi giao dịch phải xác định trước bao nhiêu gas sẽ được dùng. Nếu một giao dịch đang thực thi mà hết gas nó sẽ dừng lại. Do đó, một điều quan trọng khi thực hiện các giao dịch trong ethereum là bạn nên cung cấp đủ gas cho nó. Ethereum theo thiết kế không thích hợp cho các hợp đồng tính toán nặng khi việc tạo và thực hiện các smart contract là rất tốn kém. Tạo và thực thi một hợp đồng yêu cầu ether, nhưng việc truy vấn một hợp đồng không yêu cầu bất kỳ ether nào. Giả sử có một hợp đồng có hai chức năng đăng ký và liệt kê người dùng, trong đó, đăng ký người dùng yêu cầu ether nhưng truy xuất danh sách người dùng không yêu cầu bất kỳ ether nào.
+Nói một cách đơn giản, giao dịch là gói dữ liệu được người gửi ký, dữ liệu đó được gửi từ một tài khoản external. Một giao dịch ethereum chứa địa chỉ người nhận, chữ ký số của người gửi, số tiền ether được gửi đến người nhận, dữ liệu, startgas và gasprice. Địa chỉ nhận là địa chỉ public key của người nhận  còn chữ ký số được dùng để xác thực người gửi. Trường dữ liệu trong giao dịch etherum là trường không bắt buộc phải có và cũng không có chức năng trong hệ thống, tuy nhiên nó có thể được sử dụng bởi máy ảo có opcode (operation code - mã hoạt động) để cung cấp dữ liệu chạy smart contract. Startgas và gasprice dùng để tránh tính huống các vòng lặp tiêu hao hết gas. Mỗi bước tính toán yêu cầu 1 gas, ngoài ra phải trả thêm 1 gas cho mỗi 5 gas tiêu thụ. Mọi giao dịch phải xác định trước bao nhiêu gas sẽ được dùng. Nếu một giao dịch đang thực thi mà hết gas nó sẽ dừng lại. Do đó, một điều quan trọng khi thực hiện các giao dịch trong ethereum là bạn nên cung cấp đủ gas cho nó. Ethereum theo thiết kế không thích hợp cho các hợp đồng tính toán nặng khi việc tạo và thực hiện các smart contract là rất tốn kém. Tạo và thực thi một hợp đồng yêu cầu ether, nhưng việc truy vấn một hợp đồng không yêu cầu bất kỳ ether nào. Giả sử có một hợp đồng có hai chức năng đăng ký và liệt kê người dùng, trong đó, đăng ký người dùng yêu cầu ether nhưng truy xuất danh sách người dùng không yêu cầu bất kỳ ether nào.
 Không giống như giao dịch, tin nhắn được tạo ra bởi tài khoản contract thay vì tài khoản external. Tin nhắn được tạo ra khi một hợp đồng gửi thông tin đến hợp đồng khác bằng cách thực hiện mã lệnh CALL. Các thông điệp chỉ sống trong môi trường thực thi Ethereum. Tương tự như giao dịch, tin nhắn cũng có người gửi, người nhận, ether được gửi, giá trị dữ liệu và giá trị startgas.
 
 ### Smart Contracts
 
-Hợp đồng thông minh là một thàn phần quan trọng tạo nên sự thành công của Ethereum. Nó là một chương trình tự trị, tự thực thi trong môi trường thực thi Ethereum khi được kích hoạt bởi một tin nhắn hoặc một giao dịch. Nó có số dư ether riêng. Mã hợp đồng thông minh thực hiện cho đến khi nó gặp một lỗi, lệnh STOP hoặc RETURN. Các chương trình của smart contract có quyền truy cập vào ba loại không gian lưu trữ: ngăn xếp, bộ nhớ và bộ lưu trữ để lưu trữ dữ liệu. Ngăn xếp là vùng chứa last in first out, nơi các giá trị có thể được nhét vào và lấy ra. Tương tự, bộ nhớ là mảng byte không giới hạn. Bộ lưu trữ là không gian lưu trữ dài hạn theo kiến trúc key/value.
+Hợp đồng thông minh là một thành phần quan trọng tạo nên sự thành công của Ethereum. Nó là một chương trình tự trị, tự thực thi trong môi trường Ethereum, nó chạy khi được kích hoạt bởi một tin nhắn hoặc một giao dịch. Nó có số dư ether riêng. Chương trình trong smart contract thực hiện cho đến khi nó gặp một lỗi, lệnh STOP hoặc RETURN. Các chương trình của smart contract có quyền truy cập vào ba loại không gian lưu trữ: ngăn xếp, bộ nhớ và bộ lưu trữ để lưu trữ dữ liệu. Ngăn xếp là vùng chứa last in first out, nơi các giá trị có thể được nhét vào và lấy ra. Tương tự, bộ nhớ là mảng byte không giới hạn. Bộ lưu trữ là không gian lưu trữ dài hạn theo kiến trúc key/value.
 Hợp đồng thông minh được viết bằng cách sử dụng ngôn ngữ solidity hoặc serpent. Khi một chương trình được viết bằng một trong những ngôn ngữ này, nó có thể được triển khai trong Ethereum Blockchain bằng cách sử dụng ví Mist hoặc Ethereum. Ví Mist và Ethereum là ứng dụng được phát triển trên nền tảng ethereum, các ứng dụng này cho phép các nhà phát triển / người dùng tạo tài khoản và các ứng dụng ethereum. Ứng dụng Mist và Wallet cũng cho phép người dùng kiểm tra và triển khai các ứng dụng ethereum của họ vào mạng. Giống như trong Bitcoin, hợp đồng có thể được triển khai trong mạng lưới chính hoặc mạng riêng hoặc mạng thử nghiệm.
 
 ### Decentralized Autonomous Organization (Tổ chức tự trị phi tập trung)
 
-Ethereum smart contract và blockchain cung cấp tiềm năng không giới hạn để phát triển một loạt các ứng dụng phi tập trung (Dapps). Ví dụ, tiền điện tử riêng, tổ chức tự quản phân cấp (decentralized autonomous organization - DAO) và hệ thống lưu trữ phi tập trung. Tiền điện tử riêng có thể được các công ty sử dụng cho mục đích nội bộ của họ. Trong khi đó mục tiêu của DAO là xây dựng hệ thống các quy tắc và các bộ máy ra quyết định của một tổ chức, loại bỏ nhu cầu về tài liệu và người quản lý, tạo ra một cấu trúc với sự kiểm soát phi tập trung. Nền tản này có thể được sử dụng bởi nhà đầu tư để đầu tư vào các dự án khởi nghiệp vì tính minh bạch, phân tán và phân quyền. Lưu trữ phân cấp cho phép người dùng cho thuê ổ cứng không sử dụng của họ. Một số ứng dụng thực tế là Weifund, Uport và Provenance. Weifund tận dụng smart contract để cung cấp một nền tảng mở cho các chiến dịch gây quỹ cộng đồng. Uport cung cấp một nền tản cho người dùng để tự kiểm soát định danh của họ thay vì đưa sự kiểm soát cho các tổ chức chính phủ. Provenance cho phép mở rộng chuỗi cung ứng bằng cách giám sát lịch sử sản phẩm nhờ đó người tiêu dùng có thể đưa ra quyết định khi họ mua sản phẩm.
+Ethereum smart contract và blockchain cung cấp tiềm năng không giới hạn để phát triển một loạt các ứng dụng phi tập trung (Dapps). Ví dụ, tiền điện tử riêng, tổ chức tự quản phân cấp (decentralized autonomous organization - DAO) và hệ thống lưu trữ phi tập trung. Tiền điện tử riêng có thể được các công ty sử dụng cho mục đích nội bộ của họ. Trong khi đó mục tiêu của DAO là xây dựng các tổ chức với các quy tắc và một bộ máy ra quyết định được định sẵn từ trước, nó giúp loại bỏ nhu cầu biên soạn tài liệu để miêu tả quy định hay nội quy và người quản lý thực hiện các quy định và nội quy đó. Nền tản này có thể được sử dụng bởi nhà đầu tư để đầu tư vào các dự án khởi nghiệp vì tính minh bạch, phân tán và phân quyền. Lưu trữ phân cấp cho phép người dùng cho thuê ổ cứng không sử dụng của họ. Một số ứng dụng thực tế là Weifund, Uport và Provenance. Weifund tận dụng smart contract để cung cấp một nền tảng mở cho các chiến dịch gây quỹ cộng đồng. Uport cung cấp một nền tản cho người dùng để tự kiểm soát định danh của họ thay vì đưa sự kiểm soát cho các tổ chức chính phủ. Provenance cho phép mở rộng chuỗi cung ứng bằng cách giám sát lịch sử sản phẩm nhờ đó người tiêu dùng có thể đưa ra quyết định khi họ mua sản phẩm.
 
 ### Những mối đe dọa
 
-Mặc dù Ethereum là an toàn và phân tán nó có những điểm yếu nhất định. Mã nguồn Ethereum là mã nguồn mở và được duy trì bởi một nhóm những nhà phát triển. Vì vậy, nếu có một lỗi trong mã nguồn hoặc lỗi kỹ thuật, hacker có thể dễ dàng khai thác nó. Ví dụ, vào tháng 4 2016 The Decentralized Autonomous organization (The DAO) được phát triển từ fork cứng (không tương thích ngược) của Ethereum với mục tiêu tạo ra một liên doanh tư bản. Nhưng vào tháng 5 2016, một lỗ hổng trong mã nguồn của DAO dẫn tới mất 50 triệu USD tiền Ether.
+Mặc dù Ethereum an toàn và phân tán nhưng nó vẫn có những điểm yếu nhất định. Mã nguồn Ethereum là mã nguồn mở và được duy trì bởi một nhóm những nhà phát triển. Vì vậy, nếu có một lỗi trong mã nguồn hoặc lỗi kỹ thuật, hacker có thể dễ dàng khai thác nó. Ví dụ, vào tháng 4 2016 The Decentralized Autonomous organization (The DAO) được phát triển từ fork cứng (không tương thích ngược) của Ethereum với mục tiêu tạo ra một liên doanh tư bản. Nhưng vào tháng 5 2016, một lỗ hổng trong mã nguồn của DAO dẫn tới mất 50 triệu USD tiền Ether.
 
 # BitTorrent
+Hãy tưởng tượng bạn cần download một file và ở đâu đó ngoài kia có những người sẽ gửi cho bạn những phần nhỏ trong file đó, sau đó bạn nối những gì mình nhận được với nhau để tạo thành file bạn muốn, đó là nguyên lý hoạt động của giao thức BitTorrent.
 
-BitTorrent là một giao thức dùng để phân phối tập tin. Nó xác định nội dung theo URL và được thiết kế để tích hợp liền mạch với web. Lợi thế của nó so với HTTP thuần là khi có nhiều lượt tải xuống trên cùng một tệp xảy ra đồng thời, các trình tải xuống đồng thời tải lên cho nhau, điều này giúp hỗ trợ số lượng người tải xuống rất lớn.
+[TODO: hình client - server]
 
-## Các thực thể
+Hầu hết các dịch vụ mạng mà chúng ta đang sử dụng hiện nay hoạt động theo mô hình client-server, một client sẽ kết nối tới server để yêu cầu dữ liệu nó cần, sau đó server sẽ gửi lại dữ liệu mà client yêu cầu. Trong ví dụ dữ liệu được yêu cầu là file.txt.
 
-Quá trình phân phối file qua BitTorrent bao gồm các thực thể sau:
+[TODO: hình http-request http-respone]
 
-- Một web server truyền thống
-- Một file chứa metainfo
-- Một BitTorrent tracker
-- Một trình duyệt truyền thống
-- Một trình download
+Để chỉ cho server biết file mà mình cần, client sử dụng URL (uniform resource locator). Trong ví dụ trên server example.com biết file client cần tìm ở đường dẫn '/file.txt'. Khi nhiều client cùng kết nối tới một server, thì nó cần được nâng cấp nếu không nó sẽ trở nên quá tải. Một vấn đề lớn của mô hình này là nếu server không còn hoạt động thì toàn bộ client cũng không thể truy cập dữ liệu nữa và nếu file bị đổi tên thì client cũng không thể donwload file với URL cũ được nữa.
+Trong mô hình BitTorrent không tồn tại server chỉ có các client (hay còn được gọi là peer), khi một người muốn chia sẽ một file với mọi người họ tạo một file torrent và bắt đầu cung cấp file đó qua giao thức BitTorrent. Những client phục vụ file được gọi là seeder. Khi những client khác cần một file trong mạng (những client này được gọi là leecher), họ gửi request (yêu cầu) tới các seeder đang phục vụ file họ cần, BitTorrent request khá giống như Http request, đặc biệt là dạng Http Range request.
 
-## Khởi chạy máy chủ torrent
+[TODO: hình bittorrent request-response]
 
-Để khởi chạy máy chủ torrent cần làm theo các bước sau đây:
+Request sẽ cho biết client cần download một phần của file, từ byte có vị trí m tới byte có vị trí n và nó sẽ được seeder gửi cho phần dữ liệu tương ứng với yêu cầu của nó. Điểm mạnh của giao thức BitTorrent là khi có nhiều client tham gia vào download hay upload trên cùng một file, chúng sẽ kết nối với nhau. Thường thì một client sẽ kết nối tới nhiều client nhất có thể, để đạt được tốc độ download upload lớn nhất.
 
-1.  Khởi chạy một tracker
-2.  Khởi chạy một web server truyền thống, như apache.
-3.  Liên kết phần mở rộng .torrent với mimetype application mimetype / x-bittorrent trên web server.
-4.  Tạo tệp metainfo (.torrent) bằng cách sử dụng tệp hoàn chỉnh để được phân phát và URL của trình theo dõi.
-5.  Đặt tệp metainfo trên máy chủ web.
-6.  Liên kết đến tập tin metainfo (.torrent) vào một số trang web khác.
-7.  Chạy một trình tải xuống đã có tệp hoàn chỉnh.
+[TODO hình client kết nối vs nhau]
+
+Điều tuyệt vời nhất mà giao thức này mang lại là một người vừa có thể là người download vừa có thể là người upload, cho dù một client không có file hoàn chỉnh, nó vẫn có thể chia sẽ những phần nó có với những client khác. Giao thức BitTorrent là giao thức phân tán, vì vậy nó không có SPOF, không có trường hợp server chết dẫn đến mất file. Nếu một node ngưng hoạt động vẫn còn có hàng triệu node ở khắp nơi trên thế giới sẵn sàn phục vụ. Thiết kế này là niềm ao ước của con người từ buổi đầu của internet, nó chịu được lỗi mạng, miễn nhiễm trước các đòn tấn công nhằm vào hạ tầng công nghệ thông tin (ví dụ như DOS).
 
 ## Download
+[TODO: hình peer download]
+Một file trong mạng BitTorrent thường được cắt thành nhiều mảnh, như trong ví dụ này là 5 mảnh. Peer1 là một seeder có đầy đủ file, các peer tiếp theo có một vài mảnh của file.
+Để bắt đầu download, phải phải thực hiện một quá trình họi là handsake (bắt tay), trong đó mỗi peer sẽ cung cấp thông tin về những mảnh nó đã sở hữu, đồng thời nó cũng thông báo cho các peer đã bắt tay với nó khi nó nhận được một mảnh mới. Sau đó các request được gửi tới các peer thích hợp và dữ liệu được nhận về. Các mảnh được yêu cầu và download về không theo thứ tự nào.
+[TODO: hình peer download]
+[TODO: hình peer download]
+Khi đã có đủ các mảnh của file, các mảnh được nối lại theo thứ tự để tạo thành file hoàn chỉnh.
 
-Để bắt đầu tải xuống, người dùng làm theo các bước sau:
+## Tối ưu hóa
+Để giúp mạng BitTorrent hoạt động tốt các peer thường lựa chọn peer để download và upload theo một số nguyên tắc. Các nguyên tắc có thể kể đến là Tit-for-tat (ăn miếng trả miếng), tải về mảnh hiếm trước, bỏ qua peer chậm.
 
-1.  Cài đặt một trình download BitTorrent.
-2.  Duyệt tìm file Torrent.
-3.  Click vào link tới file .torrent.
-4.  Chọn nơi lưu file, hoặc resume nếu đã có nó.
-5.  Chờ quá trình download hoàn thành.
-6.  Đóng trình donwload (không bắt buộc).
+Tit-for-tat có nghĩa là bạn sẽ ưu tiên upload cho nhưng peer cho phép bạn download với tốc độ cao, nguyên tắc này giúp loại bỏ những peer ích kỷ, những peer chỉ download chứ không upload cho bất kì ai trong mạng.
 
-## Mã hóa Bencode
+Tải về mảnh hiếm trước, các peer không phải lúc nào cũng trực để upload các mảnh bị thiếu cho bạn. Trong vòng đời của một torrent, sẽ có lúc có rất ít seeder thường trực, ví dụ như lúc torrent mới được tạo ra, các seeder có thể sẽ offline hoặc ngắt kết nối khiến file không còn đủ các mảnh, cho dù sau đó mạng có rất nhiều peer nhưng việc hoàn thành download vẫn là không thể. Bằng cách ưu tiên tải các mảnh hiếm trước đảm bảo tính toàn vẹn cho file, tránh tình huốn xấu xảy ra.
 
-Bencoding là các mã hóa được sử dụng chủ yếu trong bittorrent, nó thực hiện mã hóa theo nguyên tắc sau.
+Cuối cùng, có những peer có tốc độ tải lên rất chậm, để hoàn thành download file trình download thường sẽ bỏ qua các peer này và request lại mảnh còn thiếu từ nhiều peer khác để kết thúc quá trình download nhanh nhất có thể.
+## Torrent file
+Để download một file qua torrent ta không thể dựa vào đường dẫn URL vì với một file mỗi máy client có thể lưu ở những đường dẫn khác nhau trên máy của họ. Do đó để download một file qua bittorrent thường cần một torrent file, file này chứa thông tin để download một file. Các thông tin chính là name (tên file), pieces (hash của các mảnh) và annnounce (địa chỉ tracker). 
 
-- Chuỗi thì được gắn độ dài ở tiền tố theo hệ thập phân, theo sau là một dấu hai chấm và chuỗi. Ví dụ 4:spam tướng ứng với 'spam'.
-- Số nguyên được biểu diễn bằng chữ 'i' theo sau bằng số nguyên theo hệ 10 và kết thức bằng chữ 'e'. Ví dụ i3e tương ứng với 3 và i-3e tương ứng với -3. Số nguyên không có giới hạn kích thước. i-0e là không hợp lệ. Tất cả mã hóa với số không ở đầu đều là bất hợp lệ, ngoại trừ i0e, thứ dĩ nhiên là tương ứng với 0.
-- Danh sách được mã hóa bằng ký tự 'l' ở đầu tiên theo sau là các phần tử của nó kết thúc với ký tự 'e'. Ví dụ l4:spam4:eggse tương ứng với ['spam','eggs'].
-- Từ điển được mã hóa bằng ký tử 'd' theo sau là danh sách xen kẽ giữa khóa và giá trị của nó và kết thúc cũng bằng ký tự 'e'. Ví dụ, d3:cow3:moo4:spam:4eggse tương ứng với {'cow':'moo', 'spam':'eggs'} và d4:spaml1:a1:bee tương ứng với {'spam':['a','b']}. Các khóa phải là chuỗi và xuất hiện theo thứ tự được sắp xếp (được sắp xếp dưới dạng chuỗi thô chứ không phải chữ và số).
+[TODO: mẫu file torrent]
 
-## Metainfo File
+Name là tên gợi ý để lưu file (hoặc thư mục), nó chỉ là gợi ý nên không bắt buộc phải có và phải tuân theo.
 
-Tệp Metainfo (còn được gọi là tệp .torrent) là các từ điển được mã hóa bencode với các key sau:
+Pieces, một file thường được chia làm nhiều mãnh, pieces lưu danh sách hash của các mãnh. Cụ thể mã hóa hash được sử dụng bởi BitTorrent là SHA-1. Khi có danh sách này trong tay, bạn có thể tự tin nhận dữ liệu từ bất kì peer nào trong mạng rồi sau đó kiểm tra xem dữ liệu nhận được có đúng là dữ liệu mong đợi hay không.
 
-- announce: URL của tracker.
-- info: Là một từ điển, với các key được mô tả ở phần tiếp theo.
-  Tất cả chuỗi trong một file .torrent phải được mã hóa theo chuẩn UTF-8.
+Cuối cùng là announce thường là url của một server (được gọi là tracker), server này làm nhiệm vụ cung cấp thông tin về peer nào đang chứa mảnh bạn cần tìm. Đây không phải là một SPOF vì bạn có thể thêm bất kỳ tracker nào vào để tìm kiếm peer nhanh hơn. Ngoài ra công nghệ DHT cho phép tìm kiếm peer mà không cần thông qua tracker.
 
-## Từ điển Info
-
-_name_ ánh xạ tới một chuỗi được mã hóa UTF-8, cũng là tên gợi ý để lưu file (hoặc thư mục). Nó hoàn toàn chỉ là tư vấn nên không bắt buộc phải có và phải tuân theo.
-_piece length_ ánh xạ tới kích thước của mỗi mảnh mà file được cắt thành. Để truyền file, file được cắt thành các mãnh có kích thước cố định như nhau ngoại trừ mảnh cuối cùng có thể ngắn hơn. 'piece length' gần như luôn là mũ của hai, phổ biến nhất là 2^18 = 256 K (BitTorrent trước phiên bản 3.2 sử dụng 2^20 = 1 M làm mặc định).
-_pieces_ ánh xạ tới một chuỗi có độ dài là bội số của 20. Nó được chia nhỏ thành các chuỗi có chiều dài 20,chúng là các hash SHA1 của phần tử tại mãnh tương ứng.
-_length_ và _files_, hai khóa này không cùng tồn tại với nhau. Nếu _length_ thì có nghĩa là chỉ có một tệp duy nhất, ngược lại thì sẽ có tập hợp các tệp theo cấu trúc thư mục. Trong tường hợp đó là một tệp thì đơn vị của _length_ là byte. Nhằm mục đích tránh trùng lặp key, trong trường hợp nhiều tệp thì chúng sẽ được nối lại tệp theo thứ tự chúng xuất hiện tạo thành danh sách tệp. Danh sách các tệp là giá trị _files_ xánh xạ tới, và nó là một danh sách các từ điển chứa các khóa sau:
-
-- _length_ - Độ dài của file, đơn vị byte.
-- _path_ - Một danh sách chuỗi được mã hóa thep UTF-8 tương ứng tới các tên thư mục con, phần tử cuối cùng là tên file (nên một danh sách có độ dài bằng 0 sẽ là trường hợp lỗi).
-
+File torrent thường khá dài vì vậy để chia sẽ torrent một cách nhanh chóng người ta hash file torrent để tạo ra một đoạn hash duy nhất. Nhờ đó một torrent file có thể được chia sẽ bằng một đoạn hash duy nhất, đó là cách magnet URI hoạt động. Đoạn hash này được gọi là info hash, ngoài mục đích nói trên info hash còn được sử dụng bởi tracker.
 ## Tracker
+[Todo: hình tracker server]
+Tracker server chứa một từ điển, từ điển này ánh xạ một info hash sang một danh sách địa chỉ các peer đang tham gia download upload torrent file có info hash đó.
 
-Yêu cầu GET tới Tracker có các khóa sau:
+## Decentralization
+[Todo: hình so sánh http torrent ]
+Để download một file cần tìm uri của file, cả torrent và http bạn đều phải tìm uri qua các công cụ tìm kiếm hoặc được chia sẻ bởi bạn bè.
+Để tìm kiếm peer, với Http ta cần có một hệ thống domain name system (DNS - hệ thống phân giải tên miền) để phân giải tên miền thành địa chỉ ip. Trong khi đó torrent dựa vào tracker để tìm kiếm địa chỉ ip của các peer.
+ Để truyền tải file, Http truyền dữ liệu từ một máy chủ trung tâm đến máy client, trong khi đó dữ liệu được truyền qua lại giữa các peer trong BitTorrent.
 
-- info_hash
-  20 byte Hash sha1 mã hóa bencoded của tệp metainfo. Giá trị này phải được gói lại.
-  Lưu ý rằng đây là một chuỗi con của tệp metainfo. info_hash phải là hash của tệp .torrent đã được mã hóa.
-- peer_id
-  Một chuỗi có độ dài 20, được trình download dùng như id của nó. Mỗi downloader tạo ra id của nó một cách ngẫu nhiên khi bắt đầu download. Giá trị này phải được gói lại.
-- ip
-  Một tham số này là tuy chọn, IP (hoặc tên dns) mà peer này đang sở hữu. Thường được sử dụng để xác định nguồn gốc.
-- port
-  Port mà peer này đang nghe. Phổ biến là port 6881 và nếu port đang được dùng trình download sẽ thử 6882, sau đó 6883, v.v ... và từ bỏ nếu lơn hơn 6889.
-- uploaded
-  Tổng số dung lượng được tải lên cho đến nay, được mã hóa thập phân.
-- downloaded
-  Tổng số dung lượng tải xuống, được mã hóa thập phân.
-- left
-  Số byte mà peer còn lại, được mã hóa thập phân. Lưu ý rằng con số này không thể được tính dựa trên downloaded và độ dài tệp vì có thể có trường hợp tải tiếp và có khả năng một số dữ liệu đã tải xuống không thành công và phải được tải xuống lại.
-- event
-  Đây là một khóa không bắt buộc, nó ánh xạ đến _started_ bắt đầu, _completed_ hoàn thành hoặc _stopped_ dừng (hoặc _empty_ trống, nghĩa là không có sẵn). Thông báo _started_ được gửi khi tải xuống lần đầu tiên và một thông báo _completed_ sẽ được được gửi khi quá trình tải xuống hoàn tất. Thông báo _completed_ sẽ không được gửi nếu tệp hoàn tất khi bắt đầu. Trình tải xuống gửi thông báo _stopped_ khi nó ngừng tải xuống.
+ ## Magnet URI
+ Định dạng tài nguyên thống nhất (URI, viết tắt từ Uniform Resource Identifier) là một chuỗi ký tự được sử dụng để xác định, nhận dạng một tên hoặc một tài nguyên. Magnet URI là một URI cung cấp đủ thông tin để download một torrent, nó có thể có nhiều phần nhưng những phần chính là:
+- magnet: xác định định dạng uri là magnet uri
+- ?xt=urn:btih: xác định info hash của torrent file
+- &dn=name: tên của file
 
-Phản hồi của tracker được mã hóa bencode. Nếu phản hồi của sẽ có một key _failure_, thì nó sẽ là chuỗi thông báo tại sao truy vấn bị lỗi, và không có key nào được truy vấn nữa. Nếu không, nó phải có hai key: _interval_ chứa thời gian dowloader nên chờ giữa những lần truy vấn và _peers_ chứa danh sách các tử điển tương ứng với _peers_, mỗi phần tử chứa id, ip và port, ánh xạ tới id tự chọn của peer, IP address hoặc dns và port. Lưu ý, trình download có thể gửi thêm request không theo yêu cầu của tracker nếu nó không nhận được thông báo từ peer khác hoặc nó cần thêm peer.
-Bạn cũng có thê thêm thông tin vào metainfo nhưng hãy thông nhất với Bram Cohen (cha đẻ BitTorrent) để đảm bảo thông tin hoạt động đúng.
-Request cung thể được yêu cầu qua giao thức UDP.
+[Todo: hình mẫu magnet uri]
 
-## Peer Protocol
-
-Giao thức ngang hàng của BitTorrent hoạt động trên giao thức TCP hoặc uTP.
-Các kết nối giữa các peer là đối xứng. Thông báo được gửi theo cả hai hướng như nhau và dữ liệu có thể truyền theo một trong hai hướng.
-Giao thức ngang hàng có liên quan đến các việc truyền các mãnh của tệp như được mô tả trong tệp metainfo. Khi một peer hoàn tất tải xuống một phần và kiểm tra xem hash có phù hợp hay không, nó thông báo rằng nó có phần đó cho tất cả các peer của nó.
-Mỗi kết nối chứa 2 bit trạng thái để cho biết: _choked_ (nghẽn) hoặc không và _interested_ (có hứng thú) hoặc không. Thông báo chocked nghĩa là sẽ không có dữ liệu nào được gửi đi cho đến khi hết nghẽn. Lý do và công nghệ sẽ dược giải thích sau.
-Dữ liệu truyền bất cứ khi nào một bên hứng thú và bên kia không bi nghẽn. Trạng thái hứng thú phải được giữa cập nhật liên tục, bất cứ khi nào một trình download thiếu thứ gì đó nó sẽ hỏi các peer không bị nghẽn, mặc dù trình download đó thể đang bị nghẽn, thì nó cũng cố bày tỏ một ít hứng thú. Làm nhứ thế khá là mưu mẹo, nhưng nó giúp downloader có thể biết được peer nào có thể dùng để download ngay khi nó hết nghẽn.
-Khi data được truyền, trình download nên tải vài mãnh cùng một lúc để có thể đạt được hiệu xuất tốt hơn (điều này được gọi là cơ chế đường ống).
-Giao thức ngang hàng chứa một lần bắt tay theo sau đó là một luồng thông điệp không bao giờ kết thúc. Bắt tay bắt đầu với ký tự '19' theo sau đó là chuỗi 'BitTorrent protocol'. Ký tự đầu tiên là độ dài của tên giao thức, đặt nó ở đó với hy vọng rằng các giao thức mới có thể làm tương tự và do đó sẽ tạo thành chuẩn chung.
-Tất cả các số nguyên được gửi trong giao thức được mã hóa theo kiểu 4 byte big-endian.
-Sau header là 8 byte được chuẩn bị sẵn, chứa toàn số không trong tất cả các phiên bản được hiện thực cho đến hiện tại. Nếu bạn muốn mở rộng protocol sử dụng những byte đó, lần nữa hãy thống nhất với Bram Cohen để đảm bảo phần mở rộng của bạn tương thích.
-Tiếp theo là đến id gồm 20 byte hash sha1, id được thông báo tới tracker và sẽ nằm trong phản hồi từ tracker. Nếu id từ phía người nhận không khớp với một trong số các các id có sẵn, nó vẫn sẽ phục vụ kết nối đó.
-Id đó dùng cho quá trình bắt tay, tiếp đến là một luồn chứa độ dài tiền tố và tin nhắn. Tin nhắn chứa độ dài bằng 0, là từ những peer còn tồn tại vì vậy sẽ bị phớt lờ. Nhìn chung mục tiêu là gửi một tin mỗi 2 phút, nhưng trong trường hợp dữ liệu được yêu cầu nhiều thì thời gian này có thể ngắn hơn.
-
-## Peer Messages
-
-Tất cả các thông điệp không được giữa tồn tại liên tục bắt đầu với một byte chứa kiểu của chúng.
-Giá trị những kiểu có thể là:
-
-- 0 - choke (nghẽn)
-- 1 - unchoke (không nghẽn)
-- 2 - interested (hứng thú)
-- 3 - not interested (không hứng thú)
-- 4 - have (có)
-- 5 - bitfield
-- 6 - request (yêu cầu)
-- 7 - piece (mãnh)
-- 8 - cancel (hủy)
-  'choke', 'unchoke', 'interested' và 'not interested' không chứa gói tin.
-  'bitfield' chỉ gửi một lần đầu. 'bitfield' là một trường bit với bit tại vị trí tướng ứng với mãnh mà trình download có được ghi là 1, phần còn lại sẽ là những số 0. Trình download chưa có bất kỳ mãnh nào có thể bỏ qua tin nhắn 'bitfield'. 8 byte đầu tiền của bitfield tương ứng với ví trí từ 0-7, tiếp theo là 8-15,... Bit cuối cùng được gán giá trị 0.
-  Gói tin của tin nhắn 'have' là một số, số này chỉ ra vị trí mà trình download đã tải xong và đã được kiểm tra hash.
-  Tin nhắn 'request' chứa các thông tin: ví trị, nơi bắt đầu và độ dài. Hai byte cuối cùng của nó cho biết vị trí byte. Độ dài thường là số mũ của 2 nếu không thì nó đã bị rút gọn tới cuối file. Tất cả các hiện thực hiện tại sử dụng 2^14 (16kiB) và đóng các kết nối yêu cầu dung lượng lớn hơn số đó.
-  Tin nhắn 'cancel' tương tự như tin nhắn 'request'. Nó thường được gửi vào cuối quá trình download. Khi một donwload gần hoàn tất, sẽ có một số mãnh còn lại tải xuống còn tồn lại. Để tải xuống chúng một cách nhanh chóng, một yêu cầu với các mãnh đó được gửi tới tất cả các trình download mà nó đang tải, ngay khi có được các mãnh đó nó ngay lập tức 'cancel' tất cả.
-  Tin nhắn 'piece' chứa các thông tin ví trị, nơi bắt đầu và độ dài. Dễ dàng thấy rằng nó xuất hiện cùng với tin nhắn request. Có thể có trường hợp các mãnh không mong đợi đến trong khi trình download đang bị nghẽn có thể do tin nhắn choke và unchoke được gửi quá nhanh hoặc quá trình gửi tin quá lâu.
-  Trình download thường sẽ donwload các mãnh theo thứ tự ngẫu nhiên, điều này thật sự tốt vì nó sẽ giúp tăng tốc trao đổi trong mạng.
-  Nghẽn xuất hiện do một số nguyên nhân. Kết nối TCP bị tắt nghẽn vì mở quá nhiều kết nối cũng một thời điểm. Ngoài ra, nghẽn cho phép peer sử dụng thuật toán tit-for-tat-ish để đảm bảo tốc độ tải xuống nhất quán.
-  Thuật toán nghẽn được mô tả hiện tại chỉ mới có một hiện thực.
-  Một vài tiêu chí mà thuật toán nghẽn tốt cần có là nó nên giới hạn số lượng kết nối tải lên đồng thời để đạt hiệu suất tốt nhất. Nó nên tránh nghẽn và thông báo hết nghẽn nhanh chóng, được biết đến là 'fibrillation'. Nó nên đáp lại peer cho phép nó download. Cuối cùng, nó nên thử từ chối một số kết nối nếu nó nhận ra rằng các kết nối này không nên có.
-  Thuật toán nghẽn hiện tại tránh 'fibrillation' chỉ bằng cách thay peer bị nghẽn mỗi 10 giây. Nó giúp có được lượng upload lớn bằng các tháo nghẽn cho 4 peer có tỉ lệ download tốt nhất. Peer có tỉ lệ upload lớn nhưng không hứng thú sẽ được gỡ nghẽn và nếu họ trở nên hứng thú thì peer upload tệ nhất sẽ bị báo là nghẽn. Nếu một download có toàn bộ file, nó sẽ dựa vào tỉ lệ upload của nó nhiều hơn download của nó để quyết định ai để gỡ nghẽn.
-  Mỗi 30 giây, một peer sẽ được gỡ nghẽn bất kể tỉ lệ upload của nó, để cho chúng cơ hội hoàn thành việc upload.
+Lợi ích mà magnet uri đem lại cho các trang chia sẽ torrent là giúp giảm hao phí hạ tầng và thiết bị, vì magnet uri nhẹ hơn rất nhiều so với torrent file. Mặt khác người dùng có thể dễ dàng chia sẽ magnet uri qua tin nhắn hoặc email hơn so với torrent file.
 
 # Open Bucket
 
