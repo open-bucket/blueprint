@@ -304,6 +304,7 @@ Một file trong mạng BitTorrent thường được cắt thành nhiều mản
 [TODO: hình peer download]
 [TODO: hình peer download]
 Khi đã có đủ các mảnh của file, các mảnh được nối lại theo thứ tự để tạo thành file hoàn chỉnh.
+[Todo: hình ghép các piece]
 
 ## Tối ưu hóa
 Để giúp mạng BitTorrent hoạt động tốt các peer thường lựa chọn peer để download và upload theo một số nguyên tắc. Các nguyên tắc có thể kể đến là Tit-for-tat (ăn miếng trả miếng), tải về mảnh hiếm trước, bỏ qua peer chậm.
