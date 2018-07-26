@@ -1,4 +1,4 @@
-# 1. Giới thiệu
+# Tóm tắt
 
 Hầu hết chúng ta sử dụng cloud services (dịch vụ đám mây) gần như hằng ngày. Ta sử dụng những ứng dụng web như Gmail, Outlook, Yahoo! để trao đổi email. Ta sử dụng những mạng xã hội như Facebook, LinkedIn và Twitter để chia sẻ thông tin và kết nối với bạn bè của mình. Những dịch vụ lưu trữ đám mây như Google Drive, iCloud và Dropbox cho phép chúng ta lưu trữ nội dung số của mình một cách nhanh chóng. Nhu cầu giải trí có thể được đáp ứng bởi Netflix, Hulu. Và những dịch vụ này không chỉ dành cho cá nhân, những tập đoàn lớn đã và đang sử dụng những dịch vụ đám mây để deploy (triển khai) ứng dụng và dịch vụ của chính họ nhằm giảm chi phí vận hành. Một số ví dụ tiêu biểu có thể kể đến như Uber, Reddit và Netflix sử dụng Amazon Web Services, Github sử dụng Rackspace. Dịch vụ đám mây đã trở thành thứ không thể thiếu trong cuộc sống hiện đại của chúng ta.
 
@@ -8,13 +8,15 @@ Theo ZDNet vào năm 2016 [26]: trang mạng xã hội Tumblr đã bị thất t
 
 Loại hình dịch vụ lưu trữ đám mây cũng không phải là ngoại lệ trong vấn đề này, hơn thế nữa, loại hình dịch vụ này còn gặp vấn đề lớn hơn vì không chỉ dữ liệu của người dùng bị thất thoát, mà cả content (nội dung) mà người dùng lưu trữ. Để phần nào giải quyết vấn đề đối với loại hình dịch vụ này, chúng tôi đã thiết kế và phát triển một prototype (nguyên mẫu) sử dụng công nghệ blockchain và bittorrent. Prototype này là một dịch vụ lưu trữ mà không yêu cầu người dùng chia sẽ dữ liệu cá nhân của họ cho nhà cung cấp. Việc xác thực và thanh toán được thực hiện bởi Ethereum blockchain, việc upload và download content được hiện thực dựa trên giao thức bittorrent. Prototype này cung cấp một self-contained digital identity system (hệ thống nhận diện kỹ thuật số độc lập) cho người dùng cùng lúc đó tạo nên một mạng lưới nơi mà mọi người có thể chia sẻ dung lượng trong máy của mình với nhau, nội dung của người dùng được lưu trữ bởi những người dùng khác, và chỉ riêng người sở hữu những nội dung đó mới có thể xem được. Qua đó, prototype này loại bỏ phần lớn sự phụ thuộc của người sử dụng dịch vụ với nhà cung cấp, nhưng vẫn cho phép nhà cung cấp triển khai logic của họ trong việc định danh người dùng cũng như dễ dàng mở rộng mạng lưới, và thu thập lợi nhuận để duy trì mạng lưới của mình.
 
+# 1. Mở đầu
+
 ## 1.1 Báo cáo vấn đề
 
 Chúng tôi nêu rõ vấn đề mà chúng tôi giải quyết như sau: Lưu trữ dữ liệu và nội dung của người dùng một cách tập trung như những nhà cung cấp dịch vụ lưu trữ đám mây vẫn đang làm tuy đã là tiêu chuẩn từ rất lâu nhưng giờ đây đã có nhiều hạn chế và chứa dựng nhiều mối nguy hiểm tiềm ẩn cho dữ liệu của người dùng. Để giải quyết vấn đề này, chúng tôi đã thiết kế và hiện thực một prototype, một mạng lưới chia sẻ dung lượng lưu trữ cùng với một hệ thống thanh toán mà không đòi hỏi người sử dụng phải chia sẻ thông tin cá nhân của mình.
 
 ## 1.2 Sơ lược nội dung
 
-Ở chương này chúng tôi đề cập đến động lực, vấn đề và hướng giải quyết. Chương 2 mô tả các khái niệm chính về cách thức authentication (xác thực), storage (lưu trữ) và (billing) thanh toán hiện có của những dịch vụ lưu trữ đám mây hiện tại và những lổ hổng có thể có. Tiếp đó, chương 3 trình bày khái niệm chính về công nghệ Blockchain, kiến trúc của nó, cách nó hoạt động và các lỗ hổng của nó. Chương 4 mô tả các ứng dụng Blockchain phổ biến nhất. Chương 5 bao gồm những công nghệ được sử dụng để hiện thực prototype và lý do đằng sau những lựa chọn đó. Chương 6 bàn về thiết kế, kiến trúc, diagram (sơ đồ) của prototype. Chương 7 là cách thức chúng tôi hiện thực, triển khai prototype và cách mà nó hoạt động. Chương cuối cùng bàn về kết quả mới đạt được so với những gì hiện có.
+Ở chương này chúng tôi đề cập đến động lực, vấn đề và hướng giải quyết. Chương 2 mô tả các khái niệm chính về cách thức authentication (xác thực), storage (lưu trữ) và (billing) thanh toán hiện có của những dịch vụ lưu trữ đám mây hiện tại và những lổ hổng có thể có. Tiếp đó, chương 3 trình bày khái niệm chính về công nghệ Blockchain, kiến trúc của nó, cách nó hoạt động và các lỗ hổng của nó. Chương 4 mô tả các ứng dụng Blockchain phổ biến nhất. Chương 5 giải thích lý do đằng sau những công nghệ được lựa chọn để hiện thực prototype. Chương 6 bàn về thiết kế, kiến trúc, diagram (sơ đồ) của prototype. Chương 7 là cách thức chúng tôi hiện thực, triển khai prototype và cách mà nó hoạt động. Chương cuối cùng bàn về kết quả mới đạt được so với những gì hiện có.
 
 # 2. Xác thực, Lưu trữ và Thanh toán
 
@@ -406,26 +408,43 @@ Giá trị những kiểu có thể là:
   Thuật toán nghẽn hiện tại tránh 'fibrillation' chỉ bằng cách thay peer bị nghẽn mỗi 10 giây. Nó giúp có được lượng upload lớn bằng các tháo nghẽn cho 4 peer có tỉ lệ download tốt nhất. Peer có tỉ lệ upload lớn nhưng không hứng thú sẽ được gỡ nghẽn và nếu họ trở nên hứng thú thì peer upload tệ nhất sẽ bị báo là nghẽn. Nếu một download có toàn bộ file, nó sẽ dựa vào tỉ lệ upload của nó nhiều hơn download của nó để quyết định ai để gỡ nghẽn.
   Mỗi 30 giây, một peer sẽ được gỡ nghẽn bất kể tỉ lệ upload của nó, để cho chúng cơ hội hoàn thành việc upload.
 
-# Open Bucket
+# 6. Open Bucket Network
+Như đã nói ở Chương 1, chúng tôi tập trung giải quyết vấn đề cốt lõi về dữ liệu người dùng bằng cách xây dựng một prototype - một mạng lưới chia sẻ dung lượng lưu trữ cùng với một hệ thống thanh toán mà không đòi hỏi người sử dụng phải chia sẻ thông tin cá nhân của mình. Chúng tôi gọi nó là Open Bucket Network (OBN). Không như cách truyền thống - nhà cung cấp dịch vụ lưu trữ và serve (phục vụ) dữ liệu người dùng, OBN cho phép thành viên bên trong OBN có thể chia sẻ dung lượng lưu trữ với nhau, đồng nghĩa với việc người dùng không được tập trung ở một nơi duy nhất, mà được duy trì bởi toàn mạng lưới. Ta gọi những người "cho thuê" dung lượng là Producer, vì họ **cung cấp** dung lượng cho OBN. Tương tự, ta gọi những người "mượn" dung lượng là Consumer, vì họ **sử dụng** dung lượng từ OBN.
 
-## Mối quan hệ giữ những công nghệ lựa chọn
+[Hình 6.1 Những tính năng cơ bản mà OBN cung cấp](./OBN-basic-usage.png)
 
-## Thiết kế
+## 6.1 Kiến trúc
+Trong phần này ta nói sâu hơn về các thành phần và kiến trúc của OBN. Nhưng trước tiên ta cần lưu ý OBN ở thời điểm hiện tại vẫn chỉ là một proof-of-concept, tức là ta không kì vọng prototype này sẽ luôn chạy ổn định và có thể sử dụng cho mục đích thương mại.
 
-### Yêu cầu
+[Hình 6.2 Kiến trúc của Open Bucket Network](./Architecture.png)
 
-### Kiến trúc phần mềm
+Kiến trúc của OBN ở tầng cao nhất được thể hiện như hình 6.1, Open Bucket Network gồm 3 component (thành phần): OBN Daemon, OBN Tracker, và OBN Ethereum Smart Contract. Trong đó OBN Daemon và OBN Tracker là 2 component tạo nên Open Bucket Network, ngoài giao tiếp với nhau, 2 thành phần này giao tiếp trực tiếp với thành phần thứ 3 - OBN Ethereum Smart Contract thông qua Ethereum Network.
 
-### Flow diagram
+Một mạng lưới được tạo ra bởi nhiều node liên kết với nhau và có thể với một máy chủ trung gian. Thành phần đầu tiên của Open Bucket Network: OBN Daemon là ứng dụng mà người dùng phải cài đặt vào máy để có thể được xác nhận là một node trong Open Bucket Network. Tuy nhiên những node trong mạng lưới rất khó để kết nối hay giao tiếp với nhau mà không thông qua một server trung gian, OBN Tracker được tạo ra để làm công việc đó. Cuối cùng OBN Ethereum Smart Contracts là thành phần của OBN duy nhất mà không ở bên trong OBN, OBN Ethereum Smart Contract là một tập hợp những Ethereum Smart Contract làm công việc xác nhận danh tính người dùng bên trong mạng lưới và thanh toán.
 
-## Hiện thực
+### 6.1.1 OBN Daemon
+Như đã nói ở trên, OBN Daemon là một ứng dụng desktop cần thiết để máy tính người dùng trở thành một node trong OBN. Tương ứng với 2 actor (tác nhân) trong OBN, OBN Daemon gồm 2 thành phần chính: Consumer và Producer. Hai thành phần này có thể hoạt động một cách độc lập mặc dù đều được gói gọn trong OBN Daemon. Chúng là phương tiện chính để người dùng giao tiếp với OBN. Consumer là tập hợp những chức năng dành cho OBN Consumer, trong đó những chức năng chính bao gồm: đăng kí, upload file, download file, xoá file trên OBN và thanh toán. Tương tự, người dùng sử dụng tập chức năng Producer có thể: nhận file từ mạng lưới, serve file cho mạng lưới và thụ hưởng Ether họ đã kiếm được.
 
-### Software
+### 6.1.2 OBN Tracker
+OBN Tracker là trái tim của OBN, component này là một hay nhiều máy chủ liên kết với nhau bao gồm: một HTTP server, một Bittorrent Tracker Server và một websocket server có mục đích chính là liên kết OBN Consumer và OBN Producer với nhau và với Ethereum Network. HTTP Server xử lí những tác vụ stateless như đăng kí, đăng nhập, xem danh sách file đang trên mạng lưới, v.v... . Bittorrent Tracker Server là một Bittorrent Tracker giúp cho Consumer và Producer trong mạng lưới tìm thấy nhau. Cuối cùng WS Server xử lí những tác vụ stateful như: upload files, download files, serve files, v.v... .
 
-### Cài đặt môi trường
+### 6.1.3 OBN Ethereum Smart Contracts
+OBN có tổng cộng 3 loại Ethereum Smart Contract bao gồm: Consumer Activator Contract, Producer Activator Contract và Consumer Contract. Trong đó Consumer Activator Contract và Producer Activator Contract mỗi loại chỉ có 1 instance thực sự hoạt động tại một thời điểm, hai Contract instance này có nhiệm vụ xác thực Ethereum Address (địa chỉ Ethereum) gắn với OBN Consumer/Producer và đảm bảo địa chỉ đó có số dư khả dụng lớn hơn hạn mức của mạng lưới, hiện tại hạn mức này là **1 finney** (bằng 0.001 Ether và bằng khoảng $0.477). Mỗi OBN Consumer khi được xác thực sẽ có một Consumer Contract instance gắn liền với nó, Consumer Contract là hợp đồng giữa một consumer đang sử dụng tài nguyên từ OBN và những producer đang cung cấp tài nguyên cho consumer đó.
 
-## Lập Trình Smart Constract
+Một người dùng có thể có nhiều consumer và producer, consumer/producer phải được kích hoạt thông qua OBN Tracker và Consumer/Producer Activator Contract để có thể tác động tới tài nguyên của mạng lưới. Consumer khi muốn tiêu thụ tài nguyên của mạng lưới, mà cụ thể là dung lượng, trước tiên phải gửi Ether của họ vào Consmer Contract với số lượng lớn hơn hạn mức đã đề cập trước đó. Consumer Contract nói cách khác là một cuốn sổ cái ghi lại giao dịch giữa consumer và producer trên OBN, cụ thể hơn, khi consumer sử dụng tài nguyên của OBN, một số lượng Ether tương ứng của họ trong Consumer Contract sẽ được chuyển qua những producer đã cung cấp tài nguyên đó, quá trình này lặp đi lặp lại cho đến khi nào số Ether khả dụng của Consumer hết hoặc người dùng xoá Consumer đó.
 
-### Soilidity
+## 6.2 Hiện thực
 
-### Mortal contract
+### 6.2.1 ER diagrams
+
+### 6.2.2 Usecase diagrams
+
+### 6.2.3 Flow diagrams
+
+### 6.2.4 OBN Daemon CLI
+
+### 6.2.5 OBN Client
+
+### 6.2.6 OBN Tracker
+
+### 6.2.7 OBN Ethereum Smart Contracts
