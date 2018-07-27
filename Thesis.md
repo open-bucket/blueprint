@@ -286,23 +286,23 @@ Mặc dù Ethereum an toàn và phân tán nhưng nó vẫn có những điểm 
 
 Hãy tưởng tượng bạn cần download một file và ở đâu đó ngoài kia có những người sẽ gửi cho bạn những phần nhỏ trong file đó, sau đó bạn nối những gì mình nhận được với nhau để tạo thành file bạn muốn, đó là nguyên lý hoạt động của giao thức BitTorrent.
 
-![](images/bittorrent/client-server.png)
+![Hình 5.1](images/bittorrent/client-server.png)
 
 Hầu hết các dịch vụ mạng mà chúng ta đang sử dụng hiện nay hoạt động theo mô hình client-server, một client sẽ kết nối tới server để yêu cầu dữ liệu nó cần, sau đó server sẽ gửi lại dữ liệu mà client yêu cầu. Trong ví dụ dữ liệu được yêu cầu là file.txt.
 
-![](images/bittorrent/http-request-response.png)
+![Hình 5.2](images/bittorrent/http-request-response.png)
 
 Để chỉ cho server biết file mà mình cần, client sử dụng URL (uniform resource locator). Trong ví dụ trên server example.com biết file client cần tìm ở đường dẫn '/file.txt'. Khi nhiều client cùng kết nối tới một server, thì nó cần được nâng cấp nếu không nó sẽ trở nên quá tải. 
 
-![](images/bittorrent/client-server-2.png)
+![Hình 5.3](images/bittorrent/client-server-2.png)
 
 Một vấn đề lớn của mô hình này là nếu server không còn hoạt động thì toàn bộ client cũng không thể truy cập dữ liệu nữa và nếu file bị đổi tên thì client cũng không thể donwload file với URL cũ được nữa.
 
-![](images/bittorrent/client-client.png)
+![Hình 5.4](images/bittorrent/client-client.png)
 
 Trong mô hình BitTorrent không tồn tại server chỉ có các client (hay còn được gọi là peer), khi một người muốn chia sẽ một file với mọi người họ tạo một file torrent và bắt đầu cung cấp file đó qua giao thức BitTorrent. Những client phục vụ file được gọi là seeder. Khi những client khác cần một file trong mạng (những client này được gọi là leecher), họ gửi request (yêu cầu) tới các seeder đang phục vụ file họ cần, BitTorrent request khá giống như Http request, đặc biệt là dạng Http Range request.
 
-![](images/bittorrent/bittorrent-request-response.png)
+![Hình 5.5](images/bittorrent/bittorrent-request-response.png)
 
 Request sẽ cho biết client cần download một phần của file, từ byte có vị trí m tới byte có vị trí n và nó sẽ được seeder gửi cho phần dữ liệu tương ứng với yêu cầu của nó. Điểm mạnh của giao thức BitTorrent là khi có nhiều client tham gia vào download hay upload trên cùng một file, chúng sẽ kết nối với nhau. Thường thì một client sẽ kết nối tới nhiều client nhất có thể, để đạt được tốc độ download upload lớn nhất.
 
@@ -310,18 +310,18 @@ Request sẽ cho biết client cần download một phần của file, từ byte
 
 ## 5.1 Download
 
-![](images/bittorrent/bt-download-1.png)
+![Hình 5.1.1](images/bittorrent/bt-download-1.png)
 Một file trong mạng BitTorrent thường được cắt thành nhiều mảnh, như trong ví dụ này là 5 mảnh. Peer1 là một seeder có đầy đủ file, các peer tiếp theo có một vài mảnh của file.
 Để bắt đầu download, bạn phải thực hiện một quá trình họi là handshake (bắt tay), trong đó mỗi peer sẽ cung cấp thông tin về những mảnh nó đã sở hữu, đồng thời nó cũng thông báo cho các peer đã bắt tay với nó khi nó nhận được một mảnh mới. Sau đó các request được gửi tới các peer thích hợp và dữ liệu được nhận về. Các mảnh được yêu cầu và download về không theo thứ tự nào.
 
-![](images/bittorrent/bt-download-2.png)
-![](images/bittorrent/bt-download-3.png)
-![](images/bittorrent/bt-download-4.png)
-![](images/bittorrent/bt-download-5.png)
+![Hình 5.1.2](images/bittorrent/bt-download-2.png)
+![Hình 5.1.3](images/bittorrent/bt-download-3.png)
+![Hình 5.1.4](images/bittorrent/bt-download-4.png)
+![Hình 5.1.5](images/bittorrent/bt-download-5.png)
 
 Khi đã có đủ các mảnh của file, các mảnh được nối lại theo thứ tự để tạo thành file hoàn chỉnh.
 
-![](images/bittorrent/arrange-pieces.png)
+![Hình 5.1.6](images/bittorrent/arrange-pieces.png)
 
 ## 5.2 Tối ưu hóa
 
@@ -337,7 +337,7 @@ Cuối cùng, có những peer có tốc độ tải lên rất chậm, để ho
 
 Để download một file qua torrent ta không thể dựa vào đường dẫn URL vì với một file mỗi máy client có thể lưu ở những đường dẫn khác nhau trên máy của họ. Do đó để download một file qua bittorrent thường cần một torrent file, file này chứa thông tin để download một file. Các thông tin chính là name (tên file), pieces (hash của các mảnh) và annnounce (địa chỉ tracker).
 
-![](images/bittorrent/torrent-file.png)
+![Hình 5.3.1](images/bittorrent/torrent-file.png)
 
 Name là tên gợi ý để lưu file (hoặc thư mục), nó chỉ là gợi ý nên không bắt buộc phải có và phải tuân theo.
 
@@ -349,13 +349,13 @@ File torrent thường khá dài vì vậy để chia sẽ torrent một cách n
 
 ## 5.4 Tracker
 
-![](images/bittorrent/dictionary-in-tracker.png)
+![Hình 5.4.1](images/bittorrent/dictionary-in-tracker.png)
 
 Tracker server chứa một từ điển, từ điển này ánh xạ một info hash sang một danh sách địa chỉ các peer đang tham gia download upload torrent file có info hash đó.
 
 ## 5.5 Decentralization
 
-![](images/bittorrent/compare-http-torrent.png)
+![Hình 5.5.1](images/bittorrent/compare-http-torrent.png)
 
 Để download một file cần tìm uri của file, cả torrent và http bạn đều phải tìm uri qua các công cụ tìm kiếm hoặc được chia sẻ bởi bạn bè.
 Để tìm kiếm peer, với Http ta cần có một hệ thống domain name system (DNS - hệ thống phân giải tên miền) để phân giải tên miền thành địa chỉ ip. Trong khi đó torrent dựa vào tracker để tìm kiếm địa chỉ ip của các peer.
@@ -369,7 +369,7 @@ Tracker server chứa một từ điển, từ điển này ánh xạ một info
 - ?xt=urn:btih: xác định info hash của torrent file
 - &dn=name: tên của file
 
-![](images/bittorrent/magnet-uri.png)
+![Hình 5.6.1](images/bittorrent/magnet-uri.png)
 
 Lợi ích mà magnet uri đem lại cho các trang chia sẽ torrent là giúp giảm hao phí hạ tầng và thiết bị, vì magnet uri nhẹ hơn rất nhiều so với torrent file. Mặt khác người dùng có thể dễ dàng chia sẽ magnet uri qua tin nhắn hoặc email hơn so với torrent file.
 
