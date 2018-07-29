@@ -1,3 +1,5 @@
+# Hiện thực distributed storage network dựa trên công nghệ Blockchain
+
 # Tóm tắt
 
 Hầu hết chúng ta sử dụng cloud services (dịch vụ đám mây) gần như hằng ngày. Ta sử dụng những ứng dụng web như Gmail, Outlook, Yahoo! để trao đổi email. Ta sử dụng những mạng xã hội như Facebook, LinkedIn và Twitter để chia sẻ thông tin và kết nối với bạn bè của mình. Những dịch vụ lưu trữ đám mây như Google Drive, iCloud và Dropbox cho phép chúng ta lưu trữ nội dung số của mình một cách nhanh chóng. Nhu cầu giải trí có thể được đáp ứng bởi Netflix, Hulu. Và những dịch vụ này không chỉ dành cho cá nhân, những tập đoàn lớn đã và đang sử dụng những dịch vụ đám mây để deploy (triển khai) ứng dụng và dịch vụ của chính họ nhằm giảm chi phí vận hành. Một số ví dụ tiêu biểu có thể kể đến như Uber, Reddit và Netflix sử dụng Amazon Web Services, Github sử dụng Rackspace. Dịch vụ đám mây đã trở thành thứ không thể thiếu trong cuộc sống hiện đại của chúng ta.
@@ -18,7 +20,7 @@ Chúng tôi nêu rõ vấn đề mà chúng tôi giải quyết như sau: Lưu t
 
 Ở chương này chúng tôi đề cập đến động lực, vấn đề và hướng giải quyết. Chương 2 mô tả các khái niệm chính về cách thức authentication (xác thực), storage (lưu trữ) và (billing) thanh toán hiện có của những dịch vụ lưu trữ đám mây hiện tại và những lổ hổng có thể có. Tiếp đó, chương 3 trình bày khái niệm chính về công nghệ Blockchain, kiến trúc của nó, cách nó hoạt động và các lỗ hổng của nó. Chương 4 mô tả các ứng dụng Blockchain phổ biến nhất. Chương 5 giải thích lý do đằng sau những công nghệ được lựa chọn để hiện thực prototype. Chương 6 bàn về thiết kế, kiến trúc, diagram (sơ đồ) của prototype. Chương 7 là cách thức chúng tôi hiện thực, triển khai prototype và cách mà nó hoạt động. Chương cuối cùng bàn về kết quả mới đạt được so với những gì hiện có.
 
-# 2. Xác thực, Lưu trữ và Thanh toán
+# 2. Xác thực và Thanh toán
 
 Cloud service được chia ra làm 3 loại: software as a service (SaaS), platform as a service (PaaS) và infrastructure as a service (IaaS). Cloud storage service là một dạng PaaS, trong đó nhà cung cấp cho người dùng dung lượng lưu trữ với sự đảm bảo về security (bảo mật), availability (khả dụng), consistency (nguyên vẹn). Kiến trúc được sử dụng phổ biến nhất để hiện thực loại dịch vụ này là client-server, trong đó client (người dùng) tương tác với server (máy chủ) chứa những business logic(logic nghiệp vụ) cần thiết. Xác thực là quá trình xác minh danh tính của người dùng, lưu trữ là quá trình nhà cung cấp lưu trữ cũng như serve (phục vụ) content của người dùng. Thanh toán là sự kết hợp của quá trình theo dõi tài nguyên sử dụng của người dùng và kiểm toán, phân tích dữ liệu.
 
@@ -42,17 +44,13 @@ Xác thực bằng sinh trắc học là một trong những phương pháp xác
 
 Multi-Factor authentication (xác thực đa yếu tố) là một phương pháp xác thực nâng cao sử dụng kết hợp what-you-know và what-you-have hoặc what-you-are để xác thực người dùng. Ví dụ: người dùng có thể sử dụng thẻ ATM cùng với mã PIN hoặc dấu vân tay. Tương tự, người dùng có thể truy cập vào dịch vụ đám mây bằng mật khẩu và mã từ một thiết bị phần cứng (thường là smartphone) được liên kết từ trước. Phương pháp này thân thiện với người dùng nhưng đòi hỏi chi phí triển khai cao hơn.
 
-## 2.2 Lưu trữ
-
-TODO
-
-## 2.3 Thanh toán
+## 2.2 Thanh toán
 
 Việc thanh toán được thực hiện bằng cách tổng hợp số liệu thống kế tài nguyên được người dùng sử dụng trong một khoảng thời gian nhất định kết hợp giá được định trước bởi nhà cung cấp. Tài nguyên này có thể là băng thông, dung lượng đĩa, hoặc thậm chí là lượt truy cập.
 
 Một hệ thống thanh toán bao gồm ba service (dịch vụ) cơ bản: metering (đo lường), accounting (kiểm toán) và billing (thanh toán). Hệ thống này theo dõi tài nguyên mà người dùng sử dụng thông qua metering service, output của này là metering data sẽ được chuyển tiếp đến accouting service như trong Hình 2. Accounting service sẽ phân tích và tính toán lượn tài nguyên được sử dụng và tạo ra accounting data. Cuối cùng acouting data được sử dụng bởi billing service để yêu cầu người dùng thanh toán dựa trên thông tin người dùng cung cấp trong lúc đăng ký sử dụng dịch vụ.
 
-[Figure 2: General Accounting Architecture].
+![Hình 2: General Accounting Architecture](./images/GeneralAccoutingArchitecture.png).
 
 ## 2.4 Những lỗ hổng tiềm ẩn
 
@@ -292,7 +290,7 @@ Hầu hết các dịch vụ mạng mà chúng ta đang sử dụng hiện nay h
 
 ![Hình 5.2](images/bittorrent/http-request-response.png)
 
-Để chỉ cho server biết file mà mình cần, client sử dụng URL (uniform resource locator). Trong ví dụ trên server example.com biết file client cần tìm ở đường dẫn '/file.txt'. Khi nhiều client cùng kết nối tới một server, thì nó cần được nâng cấp nếu không nó sẽ trở nên quá tải. 
+Để chỉ cho server biết file mà mình cần, client sử dụng URL (uniform resource locator). Trong ví dụ trên server example.com biết file client cần tìm ở đường dẫn '/file.txt'. Khi nhiều client cùng kết nối tới một server, thì nó cần được nâng cấp nếu không nó sẽ trở nên quá tải.
 
 ![Hình 5.3](images/bittorrent/client-server-2.png)
 
@@ -377,13 +375,13 @@ Lợi ích mà magnet uri đem lại cho các trang chia sẽ torrent là giúp 
 
 Như đã nói ở Chương 1, chúng tôi tập trung giải quyết vấn đề cốt lõi về dữ liệu người dùng bằng cách xây dựng một prototype - một mạng lưới chia sẻ dung lượng lưu trữ cùng với một hệ thống thanh toán mà không đòi hỏi người sử dụng phải chia sẻ thông tin cá nhân của mình. Chúng tôi gọi nó là Open Bucket Network (OBN). Không như cách truyền thống - nhà cung cấp dịch vụ lưu trữ và serve (phục vụ) dữ liệu người dùng, OBN cho phép thành viên bên trong OBN có thể chia sẻ dung lượng lưu trữ với nhau, đồng nghĩa với việc người dùng không được tập trung ở một nơi duy nhất, mà được duy trì bởi toàn mạng lưới. Ta gọi những người "cho thuê" dung lượng là Producer, vì họ **cung cấp** dung lượng cho OBN. Tương tự, ta gọi những người "mượn" dung lượng là Consumer, vì họ **sử dụng** dung lượng từ OBN.
 
-[Hình 6.1 Những tính năng cơ bản mà OBN cung cấp](./OBN-basic-usage.png)
+![Hình 6.1 Những tính năng cơ bản mà OBN cung cấp](images/OBN-basic-usage.png)
 
 ## 6.1 Kiến trúc
 
 Trong phần này ta nói sâu hơn về các thành phần và kiến trúc của OBN. Nhưng trước tiên ta cần lưu ý OBN ở thời điểm hiện tại vẫn chỉ là một proof-of-concept, tức là ta không kì vọng prototype này sẽ luôn chạy ổn định và có thể sử dụng cho mục đích thương mại.
 
-[Hình 6.2 Kiến trúc của Open Bucket Network](./Architecture.png)
+![Hình 6.2 Kiến trúc của Open Bucket Network](images/Architecture.png)
 
 Kiến trúc của OBN ở tầng cao nhất được thể hiện như hình 6.1, Open Bucket Network gồm 3 component (thành phần): OBN Daemon, OBN Tracker, và OBN Ethereum Smart Contract. Trong đó OBN Daemon và OBN Tracker là 2 component tạo nên Open Bucket Network, ngoài giao tiếp với nhau, 2 thành phần này giao tiếp trực tiếp với thành phần thứ 3 - OBN Ethereum Smart Contract thông qua Ethereum Network.
 
@@ -405,16 +403,460 @@ Một người dùng có thể có nhiều consumer và producer, consumer/produ
 
 ## 6.2 Hiện thực
 
-### 6.2.1 ER diagrams
+Tiểu mục này bao gồm những diagram của OBN: ER digram, Usecase diagram và Flow diagrams giúp ta hiểu rõ hơn về hệ thống. Cùng với đó là đặc tả chi tiết về interface của từng thành phần trong OBN.
 
-### 6.2.2 Usecase diagrams
+### 6.2.1 ER diagram
 
-### 6.2.3 Flow diagrams
+![Hình 6.3 Open Bucket ER Diagram](./images/ERD.png)
+
+### 6.2.2 Usecase diagram
+
+![Hình 6.4 Open Bucket ER Diagram](./images/UsecaseDiagram.png)
+
+### 6.2.3 Flow diagram
+
+![Hình 6.5 Activate Consumer Flow Diaram](./images/FlowDiagrams-ConsumerActivate.png)
+![Hình 6.6 Activate Producer Flow Diaram](./images/FlowDiagrams-ProducerActivate.png)
+![Hình 6.7 Download File Flow Diaram](./images/FlowDiagrams-ConsumerDownload.png)
+![Hình 6.8 Upload File Flow Diaram](./images/FlowDiagrams-ConsumerUpload.png)
 
 ### 6.2.4 OBN Daemon CLI
 
+Ở tiểu mục này ta mô tả command line interface của OBN Daemon
+
+#### Tính năng chung
+
+**Đăng kí một người dùng mới**
+
+- Command: `obn register`
+- Inputs cho interactive mode:
+  ```
+  username                           Username người dùng
+  password                           Password người dùng
+  ```
+
+**Đăng nhập**
+
+- Command: `obn login`
+- Inputs cho interactive mode:
+  ```
+  username                           Username người dùng
+  password                           Password người dùng
+  ```
+
+#### Tính năng thuộc Consumer
+
+**Tạo Consumer**
+
+- Command: `obn consumer create`
+- Inputs cho interactive mode:
+  ```
+  name                           Chỉ định tên của consumer. Một tên ngẫu nhiên sẽ được sử dụng nếu người dùng để trống.
+  tier                           Chỉ định tier của consumer
+  ```
+- Options cho detach mode:
+  ```
+  -d, --detach                           Chỉ định command chạy trong detach mode.
+  -n, --name <string>                    Chỉ định tên của consumer.
+  -t, --tier <string>                    Chỉ định tier của consumer
+  ```
+
+**Liệt kê Consumer**: Liệt kê tất cả consumer của một người dùng
+
+- Command: `obn consumer ls`
+
+**Mô tả Consumer**: Mô tả thông tin chi tiết của consumer, bao gồm những file thuộc consumer đó
+
+- Command: `obn consumer describe <id>`
+- Params:
+  ```
+  id                           Id của consumer
+  ```
+
+**Kích hoạt Consumer**
+
+- Command: `obn consumer activate`
+- Inputs cho interactive mode:
+  ```
+  consumerId                           Chỉ định id của consumer cần kích hoạt
+  accountIndex                         Chỉ định số thứ tự của account trong wallet sẽ gắn liền với consumer được kích hoạt
+  value                                Chỉ định tiền trả trước sẽ được gửi vào Consumer Contract
+  ```
+
+**Upload file**
+
+- Command: `obn consumer upload`
+- Inputs cho interactive mode:
+  ```
+  consumerId                           Chỉ định id của consumer sử dụng
+  filePath                             Chỉ định đường dẫn tới file cần upload
+  ```
+- Options cho detach mode:
+  ```
+  -d, --detach                           Chỉ định command chạy trong detach mode
+  -c, --consumer-id <string>             Chỉ định id của consumer sử dụng
+  -p, --file-path <string>               Chỉ định đường dẫn tới file cần upload
+  ```
+
+**Download file**
+
+- Command: `obn consumer download`
+- Inputs cho interactive mode:
+  ```
+  consumerId                           Chỉ định id của consumer sử dụng
+  fildId                               Chỉ định fileId tồn tại trong hệ thống
+  downloadPath                         Chỉ định đường dẫn mà file sẽ được download xuống
+  ```
+- Options cho detach mode:
+  ```
+  -d, --detach                           Chỉ định command chạy trong detach mode
+  -c, --consumer-id <string>             Chỉ định id của consumer sử dụng
+  -f, --file-id <string>                 Chỉ định fileId tồn tại trong hệ thống
+  -p, --download-path <string>           Chỉ định đường dẫn mà file sẽ được download xuống
+  ```
+
+**Xoá file**: Xoá một file đang tồn tại trong mạng lưới
+
+- Command: `obn consumer deleteFile`
+- Inputs cho interactive mode:
+  ```
+  consumerId                           Chỉ định id của consumer sử dụng
+  fildId                               Chỉ định fileId tồn tại trong hệ thống
+  ```
+- Options cho detach mode:
+  ```
+  -d, --detach                           Chỉ định command chạy trong detach mode
+  -c, --consumer-id <string>             Chỉ định id của consumer sử dụng
+  -f, --file-id <string>                 Chỉ định fileId tồn tại trong hệ thống
+  ```
+
+**Withdraw**: Rút số tiền trả trước trong consumer contract
+
+- Command: `obn consumer withdraw`
+- Inputs cho interactive mode:
+  ```
+  consumerId                           Chỉ định id của consumer sử dụng
+  ```
+- Options cho detach mode:
+  ```
+  -d, --detach                           Chỉ định command chạy trong detach mode
+  -c, --consumer-id <string>             Chỉ định id của consumer sử dụng
+  ```
+
+**Kiểm tra tài khoản**: Kiểm tra số Ether trong tài khoản
+
+- Command: `obn consumer getBalance`
+- Inputs cho interactive mode:
+  ```
+  consumerId                             Chỉ định id của consumer sử dụng
+  ```
+- Options cho detach mode:
+  ```
+  -d, --detach                           Chỉ định command chạy trong detach mode
+  -c, --consumer-id <string>             Chỉ định id của consumer sử dụng
+  ```
+
+#### Tính năng thuộc Producer
+
+**Tạo Producer**
+
+- Command: `obn producer create`
+- Inputs cho interactive mode:
+  ```
+  name                           Chỉ định tên của producer. Một tên ngẫu nhiên sẽ được sử dụng nếu người dùng để trống.
+  spacePath                      Chỉ định đường dẫn đến Producer Space
+  spaceLimit                     Chỉ định dung lượng giới hạn trong Producer Space mà OBN Daemon có thể sử dụng
+  ```
+- Options cho detach mode:
+  ```
+  -d, --detach                           Chỉ định command chạy trong detach mode.
+  -n, --name <string>                    Chỉ định tên của producer.
+  -t, --spacePath <string>               Chỉ định đường dẫn đến Producer Space
+  -t, --spaceLimit <string>              Chỉ định dung lượng giới hạn trong Producer Space mà OBN Daemon có thể sử dụng
+  ```
+
+**Liệt kê Producer**: Liệt kê tất cả producer của một người dùng
+
+- Command: `obn producer ls`
+
+**Kích hoạt Producer**
+
+- Command: `obn producer activate`
+- Inputs cho interactive mode:
+  ```
+  producerId                           Chỉ định id của producer cần kích hoạt
+  accountIndex                         Chỉ định số thứ tự của account trong wallet sẽ gắn liền với producer được kích hoạt
+  ```
+- Options cho detach mode:
+  ```
+  -d, --detach                           Chỉ định command chạy trong detach mode.
+  -p, --producer-id <string>             Chỉ định id của producer cần kích hoạt
+  -a, --account-index <string>           Chỉ định số thứ tự của account trong wallet sẽ gắn liền với producer được kích hoạt
+  ```
+
+**Bật Producer**: Bật một producer, producer sau khi bật sẽ bắt đầu nhận file từ network
+
+- Command: `obn producer start`
+- Inputs cho interactive mode:
+  ```
+  producerId                           Chỉ định id của producer cần bật
+  ```
+- Options cho detach mode:
+  ```
+  -d, --detach                           Chỉ định command chạy trong detach mode.
+  -p, --producer-id <string>             Chỉ định id của producer cần bật
+  ```
+
+**Withdraw**: Rút số tiền đã kiếm được trong consumer contract
+
+- Command: `obn producer withdraw`
+- Inputs cho interactive mode:
+  ```
+  producerId                           Chỉ định id của producer sử dụng
+  contractAddress                      Chỉ định địa chỉ của Consumer Contract
+  ```
+- Options cho detach mode:
+  ```
+  -d, --detach                           Chỉ định command chạy trong detach mode
+  -p, --producer-id <string>             Chỉ định id của producer sử dụng
+  ```
+
+**Kiểm tra tài khoản**: Kiểm tra số Ether trong tài khoản
+
+- Command: `obn producer getBalance`
+- Inputs cho interactive mode:
+  ```
+  producerId                             Chỉ định id của producer sử dụng
+  ```
+- Options cho detach mode:
+  ```
+  -d, --detach                           Chỉ định command chạy trong detach mode
+  -p, --producer-id <string>             Chỉ định id của producer sử dụng
+  ```
+
 ### 6.2.5 OBN Client
+
+OBN Client là một thành phần phụ của Open Bucket Network, OBN Client là một desktop app bao bọc OBN Daemon và cung cấp giao diện trực quan cho người dùng để sử dụng những tính nắng của OBN Daemon thay vì command line. Dưới đây là một số hình ảnh giao diện của ứng dụng này:
+
+![Hình 6.9 OBN Client Welcome screen](./images/WelcomeScreen.png)
+![Hình 6.10 OBN Client chọn consumer](./images/ChooseAConsumer.png)
+![Hình 6.11 OBN Client tạo consumer mới](./images/CreateNewConsumer.png)
+![Hình 6.12 OBN Client chọn producer](./images/ChooseAProducer.png)
+![Hình 6.13 OBN Client khởi động một producer](./images/StartAProducer.png)
+![Hình 6.14 OBN Client tạo producer](./images/CreateAProducer.png)
 
 ### 6.2.6 OBN Tracker
 
+OBN Tracker là một server đảm nhận những logic mà OBN Ethereum Smart Contract không thể làm được. OBN Tracker giúp những consumer và producer trong mạng lưới kết nối với nhau, cùng lúc đó là người xác thực những ai tham gia vào mạng lưới. Dưới đây là đặc tả chi tiết về REST API Interface cũng như WS Interface của OBN Tracker:
+
+#### Tính năng chung
+
+**Lấy thông tin của người dùng đã được xác thực**
+
+- REST API: `GET /users/me`
+- Request header:
+  ```json
+  {
+    "Authorization": "Auth Token người dùng nhận được khi đăng nhập"
+  }
+  ```
+
+**Đăng Kí**
+
+- REST API: `POST /users`
+- Request body:
+  ```json
+  {
+    "username": "Username của người dùng",
+    "password": "Password của người dùng"
+  }
+  ```
+
+**Đăng Nhập**
+
+- REST API: `POST /users/login`
+- Request body:
+  ```json
+  {
+    "username": "Username của người dùng",
+    "password": "Password của người dùng"
+  }
+  ```
+
+#### Tính năng thuộc Consumer
+
+**Lấy thông tin của tất cả consumer thuộc về 1 user**
+
+- REST API: `GET /consumers`
+- Request header:
+  ```json
+  {
+    "Authorization": "Auth Token người dùng nhận được khi đăng nhập"
+  }
+  ```
+
+**Lấy thông tin của 1 consumer**
+
+- REST API: `GET /consumers/:id`
+- Request header:
+  ```json
+  {
+    "Authorization": "Auth Token người dùng nhận được khi đăng nhập"
+  }
+  ```
+- Path params:
+  ```
+  id                             Chỉ định id của consumer
+  ```
+
+**Lấy thông tin tất cả file thuộc về 1 consumer**
+
+- REST API: `GET /consumers/:id/files`
+- Request header:
+  ```json
+  {
+    "Authorization": "Auth Token người dùng nhận được khi đăng nhập"
+  }
+  ```
+- Path params:
+  ```
+  id                             Chỉ định id của consumer
+  ```
+
+**Tạo consumer**
+
+- REST API: `POST /consumers`
+- Request header:
+  ```json
+  {
+    "Authorization": "Auth Token người dùng nhận được khi đăng nhập"
+  }
+  ```
+- Request body:
+  ```json
+  {
+    "name": "Tên của consumer",
+    "tier": "Tier của consumer"
+  }
+  ```
+
+**Cập nhật thông tin của 1 consumer**
+
+- REST API: `PUT /consumers/:id`
+- Request header:
+  ```json
+  {
+    "Authorization": "Auth Token người dùng nhận được khi đăng nhập"
+  }
+  ```
+- Path params:
+  ```
+  id                             Chỉ định id của consumer
+  ```
+- Request body:
+  ```json
+  {
+    "name": "Tên mới của consumer"
+  }
+  ```
+
+**Xoá một file thuộc consumer**
+
+- REST API: `PUT /consumers/:id/files/:fileId`
+- Request header:
+  ```json
+  {
+    "Authorization": "Auth Token người dùng nhận được khi đăng nhập"
+  }
+  ```
+- Path params:
+  ```
+  id                             Chỉ định id của consumer
+  fileId                         Chỉ định id của file cần xoá
+  ```
+
+**Upload file**
+
+- Websocket message:
+  ```json
+  {
+    "action": "CONSUMER_UPLOAD_FILE",
+    "payload": {
+      "name": "Tên của file",
+      "hash": "Hash của file",
+      "size": "Size của file",
+      "shards": [
+        {
+          "name": "Tên của shard",
+          "magnetURI": "magnetURI của file",
+          "hash": "Hash của shard",
+          "size": "Size của shard"
+        }
+      ]
+    }
+  }
+  ```
+
+**Download file**
+
+- Websocket message:
+  ```json
+  {
+    "action": "CONSUMER_DOWNLOAD_FILE",
+    "payload": { "fileId": "Id của file cần download" }
+  }
+  ```
+
+#### Tính năng thuộc Producer
+
+**Tạo producer**
+
+- REST API: `POST /producers`
+- Request header:
+  ```json
+  {
+    "Authorization": "Auth Token người dùng nhận được khi đăng nhập"
+  }
+  ```
+- Request body:
+  ```json
+  {
+    "name": "Tên của producer"
+  }
+  ```
+
+**Lấy thông tin của tất cả producer thuộc về 1 user**
+
+- REST API: `GET /producers`
+- Request header:
+  ```json
+  {
+    "Authorization": "Auth Token người dùng nhận được khi đăng nhập"
+  }
+  ```
+
+**Lấy thông tin của 1 producer**
+
+- REST API: `GET /producers/:id`
+- Request header:
+  ```json
+  {
+    "Authorization": "Auth Token người dùng nhận được khi đăng nhập"
+  }
+  ```
+- Path params:
+  ```
+  id                             Chỉ định id của producer
+  ```
+
 ### 6.2.7 OBN Ethereum Smart Contracts
+
+Ethereum Smart Contracts miêu tả ở tầng cao nhất là nhiều singleton, immutable instance tồn tại bên trong Ethereum Blockchain. Ta lập trình một ngôn ngữ bậc cao gọi là Solidity để viết nên những bản vẽ, hay nói chính xác hơn là class để tạo ra những instance này. OBN có 4 Ethereum Smart Contract class bao gồm: Activator, Consumer Activator, Producer Activator, và Consumer. Trong đó Consumer Activate và Producer Activator kế thừa từ class Activator. Hình bên dưới là class Diagram miêu tả từng class
+![Hình 6.9](./images/ClassDiagram-OBNEthereumSmartContracts.png)
+
+# 7. Tổng kết và điểm cần cải tiến
+## 7.1 Tổng kết
+Nguyên mẫu này đã được hiện thực khá hoàn thiện, có đủ những chức năng chủ yếu nhất của một dịch vụ lưu trữ đám mây và còn hơn thế nữa. Sử dụng công nghệ Bittorent để lan truyền dữ liệu, quá trình download file và upload file đã được tối ưu rất đáng kể so với cách truyền thống: người dùng giờ sẽ không phải hoàn toàn dựa vào nhà cung cấp dịch vụ nữa, mà giờ đây họ có thể tận dụng được tốc độ, tài nguyên của toàn bộ thành viên trong mạng lưới. Tiếp đến là việc áp dụng công nghệ Blockchain, mà cụ thể là Ethereum Blockchain vào quá trình thanh toán giúp cho quá trình thanh toán hoàn toàn dễ dàng, minh bạch và ẩn danh. Người dung không cần phải cung cấp thêm bất kì thông tin nào ngoài địa chỉ Ethereum để có thể sử dụng toàn bộ những dịch vụ của mạng lưới, hơn thế nữa phí sử dụng được tính theo tài nguyên mà người dùng sử dụng từ mạng lưới và cực kì rẻ (chỉ khoảng $0.05 với mỗi GB download và $0.015 với mỗi GB lưu trữ mỗi tháng trong mạng lưới). Tất cả mọi thành viên trong mạng lưới blockchain đều có thể xem và xác minh bất kì giao dịch nào bất kì lúc nào, đồng nghĩa với việc người dùng hoàn toàn có thể xác minh tính minh bạch của Ethereum blockchain nói chung và những giao dịch mà OBN tạo ra trên Ethereum blockchain nói riêng bất kì lúc nào.
+
+## 7.2 Điểm cần cải tiến
+OBN mặc dù sử dụng 2 công nghệ dựa trên P2P network nhưng chính bản thân OBN lại có single-point-of-failure chính là OBN Tracker. Để giải quyết vấn đề này, ta có thể loại bỏ sự phụ thuộc vào OBN Tracker bằng cách đưa logic về phía OBN Daemon và đưa dữ liệu vào trong Ethereum Smart Contract thay vì lưu trong database như hiện tại, tuy nhiên lưu dữ liệu bên trong Ethereum Blockchain là một vấn đề cần phải tiếp tục suy nghĩ vì chi phí sẽ tăng lên gấp nhiều lần so với cách sử dụng database truyền thống khi OBN bắt đầu lớn dần.
